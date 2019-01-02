@@ -32,4 +32,5 @@ private:
 	GLint m_colorLoc;
 
 	GLuint m_vbo;
+	GLuint m_ibo;
 };
