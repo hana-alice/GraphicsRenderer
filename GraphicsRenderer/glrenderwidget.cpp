@@ -1,6 +1,10 @@
 #include "glrenderwidget.h"
 #include "GLES3/gl3.h"
 #include <iostream>
+#include <QImage>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "dependencies/include/stb_image.h"
 
 #define GLCheck(x) \
 (x);\
@@ -14,10 +18,10 @@
 };
 
 GLfloat vertices[] = {
-	-0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 1.0,
-	 0.5, -0.5, 0.0, 1.0, 1.0, 0.0, 1.0,
-	 0.5,  0.5, 0.0, 1.0, 0.0, 1.0, 1.0,
-	-0.5,  0.5, 0.0, 1.0, 1.0, 1.0, 1.0
+	-0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 1.0,  0.0,0.0,
+	 0.5, -0.5, 0.0, 1.0, 1.0, 0.0, 1.0,  1.0,0.0,
+	 0.5,  0.5, 0.0, 1.0, 0.0, 1.0, 1.0,  1.0,1.0,
+	-0.5,  0.5, 0.0, 1.0, 1.0, 1.0, 1.0,  0.0,1.0
 };
 
 unsigned short indices[] = {
@@ -59,7 +63,7 @@ void GLRenderWidget::initializeGL()
 	{
 		return;
 	}
-
+	
 	m_pgmid = m_pgm->programId();
 	GLCheck(glUseProgram(m_pgmid));
 	//m_matrixLoc = glGetUniformLocation(m_pgmid, "matrix");
@@ -68,8 +72,8 @@ void GLRenderWidget::initializeGL()
 	GLCheck(glGenBuffers(1, &m_vbo));
 	GLCheck(glBindBuffer(GL_ARRAY_BUFFER, m_vbo));
 	GLCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));	
-	GLCheck(glVertexAttribPointer(m_vertexLoc, 3, GL_FLOAT, false, 7 * sizeof(GL_FLOAT), 0));
-	GLCheck(glVertexAttribPointer(m_colorLoc, 4, GL_FLOAT, false, 7 * sizeof(GL_FLOAT), (void*)(3*sizeof(GL_FLOAT))));
+	GLCheck(glVertexAttribPointer(m_vertexLoc, 3, GL_FLOAT, false, 9 * sizeof(GL_FLOAT), 0));
+	GLCheck(glVertexAttribPointer(m_colorLoc, 4, GL_FLOAT, false, 9 * sizeof(GL_FLOAT), (void*)(3*sizeof(GL_FLOAT))));
 	GLCheck(glEnableVertexAttribArray(m_vertexLoc));
 	GLCheck(glEnableVertexAttribArray(m_colorLoc));
 	GLCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
@@ -78,6 +82,24 @@ void GLRenderWidget::initializeGL()
 	GLCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
 	GLCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
+	int width, height, nrChannels;
+	unsigned char *data = stbi_load("Resources/color.png", &width, &height, &nrChannels, 0);
+	if (!data)
+	{
+		std::cout << "gg\n";
+	}
+	glGenTextures(1, &m_tex);
+	glBindTexture(GL_TEXTURE_2D, m_tex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	GLuint texloc = glGetAttribLocation(m_pgmid, "inTexCoord");
+	glVertexAttribPointer(texloc, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GL_FLOAT), (void*)(7 * sizeof(GL_FLOAT)));
+	glEnableVertexAttribArray(texloc);
+	stbi_image_free(data);
 }
 
 void GLRenderWidget::paintGL()
@@ -85,8 +107,14 @@ void GLRenderWidget::paintGL()
 	GLCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	GLCheck(glClearColor(0, 0.5, 0.5, 1));
 	GLCheck(glUseProgram(m_pgmid));
+	GLCheck(glBindTexture(GL_TEXTURE_2D, m_tex));
 	GLCheck(glBindBuffer(GL_ARRAY_BUFFER, m_vbo));
 	GLCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo));
+	GLenum err = glGetError();
+	if (err != GL_NO_ERROR)
+	{
+		std::cout << "gg\n";
+	}
 	(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0));
 	
 }

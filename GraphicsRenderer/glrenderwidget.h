@@ -33,4 +33,5 @@ private:
 
 	GLuint m_vbo;
 	GLuint m_ibo;
+	GLuint m_tex;
 };
