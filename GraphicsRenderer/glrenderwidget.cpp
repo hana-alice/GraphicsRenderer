@@ -18,10 +18,10 @@
 };
 
 GLfloat vertices[] = {
-	-0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 1.0,  0.0,0.0,
-	 0.5, -0.5, 0.0, 1.0, 1.0, 0.0, 1.0,  1.0,0.0,
-	 0.5,  0.5, 0.0, 1.0, 0.0, 1.0, 1.0,  1.0,1.0,
-	-0.5,  0.5, 0.0, 1.0, 1.0, 1.0, 1.0,  0.0,1.0
+	-0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 1.0,  0.0,0.5,
+	 0.5, -0.5, 0.0, 1.0, 1.0, 0.0, 1.0,  0.0,0.0,
+	 0.5,  0.5, 0.0, 1.0, 0.0, 1.0, 1.0,  0.0,0.0,
+	-0.5,  0.5, 0.0, 1.0, 1.0, 1.0, 1.0,  0.0,0.0
 };
 
 unsigned short indices[] = {
@@ -63,10 +63,13 @@ void GLRenderWidget::initializeGL()
 	{
 		return;
 	}
+
+	glGenVertexArrays(1, &m_vao);
+	glBindVertexArray(m_vao);
 	
 	m_pgmid = m_pgm->programId();
 	GLCheck(glUseProgram(m_pgmid));
-	//m_matrixLoc = glGetUniformLocation(m_pgmid, "matrix");
+	m_matrixLoc = glGetUniformLocation(m_pgmid, "matrix");
 	m_vertexLoc = glGetAttribLocation(m_pgmid, "inPos");
 	m_colorLoc = glGetAttribLocation(m_pgmid, "inColor");
 	GLCheck(glGenBuffers(1, &m_vbo));
@@ -88,6 +91,7 @@ void GLRenderWidget::initializeGL()
 	{
 		std::cout << "gg\n";
 	}
+	glEnable(GL_TEXTURE_2D);
 	glGenTextures(1, &m_tex);
 	glBindTexture(GL_TEXTURE_2D, m_tex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -97,8 +101,9 @@ void GLRenderWidget::initializeGL()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	GLuint texloc = glGetAttribLocation(m_pgmid, "inTexCoord");
-	glVertexAttribPointer(texloc, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GL_FLOAT), (void*)(7 * sizeof(GL_FLOAT)));
+	glVertexAttribPointer(texloc, 2, GL_FLOAT, false, 9 * sizeof(GL_FLOAT), (void*)(7 * sizeof(GL_FLOAT)));
 	glEnableVertexAttribArray(texloc);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	stbi_image_free(data);
 }
 
@@ -106,16 +111,18 @@ void GLRenderWidget::paintGL()
 {
 	GLCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	GLCheck(glClearColor(0, 0.5, 0.5, 1));
+	
 	GLCheck(glUseProgram(m_pgmid));
 	GLCheck(glBindTexture(GL_TEXTURE_2D, m_tex));
 	GLCheck(glBindBuffer(GL_ARRAY_BUFFER, m_vbo));
 	GLCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo));
 	GLenum err = glGetError();
+	
+	(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0));
 	if (err != GL_NO_ERROR)
 	{
 		std::cout << "gg\n";
 	}
-	(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0));
 	
 }
 
