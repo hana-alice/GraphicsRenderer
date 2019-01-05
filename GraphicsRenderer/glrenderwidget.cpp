@@ -18,10 +18,10 @@
 };
 
 GLfloat vertices[] = {
-	-0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 1.0,  0.0,0.5,
-	 0.5, -0.5, 0.0, 1.0, 1.0, 0.0, 1.0,  0.0,0.0,
-	 0.5,  0.5, 0.0, 1.0, 0.0, 1.0, 1.0,  0.0,0.0,
-	-0.5,  0.5, 0.0, 1.0, 1.0, 1.0, 1.0,  0.0,0.0
+	-0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 1.0,  0.0,0.0,
+	 0.5, -0.5, 1.0, 1.0, 1.0, 1.0, 1.0,  1.0,0.0,
+	 0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 1.0,  1.0,1.0,
+	-0.5,  0.5, 1.0, 1.0, 1.0, 1.0, 1.0,  0.0,1.0
 };
 
 
@@ -83,7 +83,8 @@ void GLRenderWidget::initializeGL()
 	//GLCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
 	int width, height, nrChannels;
-	unsigned char *data = stbi_load("Resources/wood.png", &width, &height, &nrChannels, 0);
+	stbi_set_flip_vertically_on_load(true);
+	unsigned char *data = stbi_load("Resources/color.png", &width, &height, &nrChannels, 0);
 	if (!data)
 	{
 		std::cout << "gg\n";
