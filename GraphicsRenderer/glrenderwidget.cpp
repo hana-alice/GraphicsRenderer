@@ -24,13 +24,14 @@ GLfloat vertices[] = {
 	-0.5,  0.5, 0.0, 1.0, 1.0, 1.0, 1.0,  0.0,0.0
 };
 
+
 unsigned short indices[] = {
 	0,1,2,
 	0,2,3
 };
 
 GLRenderWidget::GLRenderWidget(QWidget *parent)
-	: QOpenGLWidget(parent), m_pgm(nullptr)
+	: QOpenGLWidget(parent), m_pgmObj(nullptr)
 {
 	ui.setupUi(this);
 }
@@ -43,31 +44,27 @@ GLRenderWidget::~GLRenderWidget()
 void GLRenderWidget::initializeGL()
 {
 	initializeOpenGLFunctions();
-	if (!m_pgm)
+	if (!m_pgmObj)
 	{
-		m_pgm = new QOpenGLShaderProgram(this);
+		m_pgmObj = new QOpenGLShaderProgram(this);
 	}
-	if (!m_pgm->addShaderFromSourceFile(QOpenGLShader::Vertex, "vertexShader.vs"))
-	{
-		return;
-	}
-	if (!m_pgm->addShaderFromSourceFile(QOpenGLShader::Fragment,"fragShader.fs"))
+	if (!m_pgmObj->addShaderFromSourceFile(QOpenGLShader::Vertex, "vertexShader.vs"))
 	{
 		return;
 	}
-	if (!m_pgm->link())
+	if (!m_pgmObj->addShaderFromSourceFile(QOpenGLShader::Fragment,"fragShader.fs"))
 	{
 		return;
 	}
-	if (!m_pgm->bind())
+	if (!m_pgmObj->link())
 	{
 		return;
 	}
-
-	glGenVertexArrays(1, &m_vao);
-	glBindVertexArray(m_vao);
-	
-	m_pgmid = m_pgm->programId();
+	if (!m_pgmObj->bind())
+	{
+		return;
+	}
+	m_pgmid = m_pgmObj->programId();
 	GLCheck(glUseProgram(m_pgmid));
 	m_matrixLoc = glGetUniformLocation(m_pgmid, "matrix");
 	m_vertexLoc = glGetAttribLocation(m_pgmid, "inPos");
@@ -79,14 +76,14 @@ void GLRenderWidget::initializeGL()
 	GLCheck(glVertexAttribPointer(m_colorLoc, 4, GL_FLOAT, false, 9 * sizeof(GL_FLOAT), (void*)(3*sizeof(GL_FLOAT))));
 	GLCheck(glEnableVertexAttribArray(m_vertexLoc));
 	GLCheck(glEnableVertexAttribArray(m_colorLoc));
-	GLCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	//GLCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	GLCheck(glGenBuffers(1, &m_ibo));
 	GLCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo));
 	GLCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
-	GLCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+	//GLCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
 	int width, height, nrChannels;
-	unsigned char *data = stbi_load("Resources/color.png", &width, &height, &nrChannels, 0);
+	unsigned char *data = stbi_load("Resources/wood.png", &width, &height, &nrChannels, 0);
 	if (!data)
 	{
 		std::cout << "gg\n";
@@ -114,6 +111,7 @@ void GLRenderWidget::paintGL()
 	
 	GLCheck(glUseProgram(m_pgmid));
 	GLCheck(glBindTexture(GL_TEXTURE_2D, m_tex));
+	
 	GLCheck(glBindBuffer(GL_ARRAY_BUFFER, m_vbo));
 	GLCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo));
 	GLenum err = glGetError();

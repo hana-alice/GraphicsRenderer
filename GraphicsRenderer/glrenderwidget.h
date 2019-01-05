@@ -5,6 +5,7 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include "ui_glrenderwidget.h"
+#include <QOpenGLVertexArrayObject> 
 
 class GLRenderWidget : public QOpenGLWidget , protected QOpenGLFunctions
       {
@@ -22,8 +23,7 @@ protected:
 	void resizeGL(int w,int h) override;
 
 private:
-	QOpenGLShaderProgram* m_pgm;
-
+	QOpenGLShaderProgram* m_pgmObj;
 	Ui::GLRenderWidget ui;
 
 	GLint m_pgmid;
