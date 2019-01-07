@@ -1,10 +1,12 @@
 #include "glrenderwidget.h"
 #include "GLES3/gl3.h"
 #include <iostream>
-#include <QImage>
-
+#include <QDateTime>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #define STB_IMAGE_IMPLEMENTATION
-#include "dependencies/include/stb_image.h"
+#include "stbimg/stb_image.h"
 
 #define GLCheck(x) \
 (x);\
@@ -115,14 +117,12 @@ void GLRenderWidget::paintGL()
 	
 	GLCheck(glBindBuffer(GL_ARRAY_BUFFER, m_vbo));
 	GLCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo));
-	GLenum err = glGetError();
 	
-	(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0));
-	if (err != GL_NO_ERROR)
-	{
-		std::cout << "gg\n";
-	}
-	
+	glm::mat4 trans;
+	trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+	trans = glm::rotate(trans, QTime::currentTime().toString().toFloat(), glm::vec3(0.0f, 0.0f, 1.0f));
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+		
 }
 
 void GLRenderWidget::resizeGL(int w, int h)
