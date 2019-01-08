@@ -36,6 +36,7 @@ GLRenderWidget::GLRenderWidget(QWidget *parent)
 	: QOpenGLWidget(parent), m_pgmObj(nullptr)
 {
 	ui.setupUi(this);
+	this->setAttribute(Qt::WA_Mapped);
 }
 
 GLRenderWidget::~GLRenderWidget()
@@ -68,7 +69,7 @@ void GLRenderWidget::initializeGL()
 	}
 	m_pgmid = m_pgmObj->programId();
 	GLCheck(glUseProgram(m_pgmid));
-	m_matrixLoc = glGetUniformLocation(m_pgmid, "matrix");
+	m_matrixLoc = glGetUniformLocation(m_pgmid, "transform");
 	m_vertexLoc = glGetAttribLocation(m_pgmid, "inPos");
 	m_colorLoc = glGetAttribLocation(m_pgmid, "inColor");
 	GLCheck(glGenBuffers(1, &m_vbo));
@@ -109,6 +110,8 @@ void GLRenderWidget::initializeGL()
 
 void GLRenderWidget::paintGL()
 {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	GLCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	GLCheck(glClearColor(0, 0.5, 0.5, 1));
 	
@@ -118,11 +121,14 @@ void GLRenderWidget::paintGL()
 	GLCheck(glBindBuffer(GL_ARRAY_BUFFER, m_vbo));
 	GLCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo));
 	
-	glm::mat4 trans;
-	trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-	trans = glm::rotate(trans, QTime::currentTime().toString().toFloat(), glm::vec3(0.0f, 0.0f, 1.0f));
+	//glm::mat4 trans;
+	//trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+	//static float ct = 0;
+	//ct += 0.1;
+	//trans = glm::rotate(trans, ct, glm::vec3(0.0f, 0.0f, 1.0f));
+	//glUniformMatrix4fv(m_matrixLoc, 1, GL_FALSE, glm::value_ptr(trans));
+	
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-		
 }
 
 void GLRenderWidget::resizeGL(int w, int h)
