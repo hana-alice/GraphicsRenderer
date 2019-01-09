@@ -1,16 +1,13 @@
-#version 330
-in vec3 inPos;
-in vec4 inColor;
-in vec2 inTexCoord;
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec2 aTexCoord;
 
-out vec4 fragColor;
-out vec2 texCoord;
+out vec2 TexCoord;
 
-//uniform mat4 transform;
+uniform mat4 transform;
 
 void main()
 {
-	fragColor = inColor;
-	gl_Position = vec4(inPos,1.0);
-	texCoord = inTexCoord;
+	gl_Position = transform * vec4(aPos, 1.0);
+	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
 }
