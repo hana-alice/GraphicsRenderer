@@ -136,7 +136,6 @@ int main()
 	data = stbi_load("resources/wood.png", &width, &height, &nrChannels, 0);
 	if (data)
 	{
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
@@ -166,21 +165,26 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// bind textures on corresponding texture units
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
-		// create transformations
-		glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-		transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-		transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+		glm::mat4 modelMat(1.0);
+		modelMat = glm::rotate(modelMat, (float)-45.0, glm::vec3(1.0, 0.0, 0.0));
+		glm::mat4 projMat(1.0);
+		projMat = glm::perspective(glm::radians(80.0f), (float)(width / height), 0.1f, 100.0f);
+		glm::mat4 viewMat(1.0);
+		viewMat = glm::translate(viewMat, glm::vec3(0.0f, 0.0f, -0.2f));
 
 		// get matrix's uniform location and set matrix
 		ourShader.use();
-		unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+		unsigned int loc = glGetUniformLocation(ourShader.ID, "modelMat");
+		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(modelMat));
+		loc = glGetUniformLocation(ourShader.ID, "viewMat");
+		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(viewMat));
+		loc = glGetUniformLocation(ourShader.ID, "projMat");
+		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(projMat));
 
 		// render container
 		glBindVertexArray(VAO);
