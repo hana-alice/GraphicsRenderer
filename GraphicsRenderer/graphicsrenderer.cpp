@@ -81,10 +81,17 @@ unsigned int indices[] = {
 	1, 2, 3  // second triangle
 };
 
+glm::vec3 camPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 camTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 camDirection = glm::vec3( camTarget - camPos);//reverse for positive
+glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 camRight = glm::normalize(glm::cross(up, camDirection));
+glm::vec3 camUp = glm::normalize(glm::cross(camDirection, camRight));
+glm::vec3 camStraitFront = glm::vec3(0.0f, 0.0f, -1.0f);
+
 int main()
 {
-	// glfw: initialize and configure
-	// ------------------------------
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -94,8 +101,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
 #endif
 
-	// glfw window creation
-	// --------------------
+
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
 	if (window == NULL)
 	{
@@ -106,16 +112,13 @@ int main()
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	// glad: load all OpenGL function pointers
-	// ---------------------------------------
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
 
-	// build and compile our shader zprogram
-	// ------------------------------------
+
 	Shader ourShader("vertexShader.vs", "fragShader.fs");
 
 	unsigned int VBO, VAO, EBO;
@@ -131,30 +134,26 @@ int main()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	// position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	// texture coord attribute
+
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
 
-	// load and create a texture 
-	// -------------------------
 	unsigned int texture1, texture2;
-	// texture 1
-	// ---------
+
 	glGenTextures(1, &texture1);
 	glBindTexture(GL_TEXTURE_2D, texture1);
-	// set the texture wrapping parameters
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// load image, create texture and generate mipmaps
+
 	int width, height, nrChannels;
-	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+	stbi_set_flip_vertically_on_load(true); 
 	unsigned char *data = stbi_load("resources/color.png", &width, &height, &nrChannels, 0);
 	if (data)
 	{
@@ -165,7 +164,7 @@ int main()
 	{
 		std::cout << "Failed to load texture" << std::endl;
 	}
-	//stbi_image_free(data);
+
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR)
 	{
@@ -195,29 +194,16 @@ int main()
 	}
 	stbi_image_free(data);
 
-	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
-	// -------------------------------------------------------------------------------------------
 	ourShader.use();
 	ourShader.setInt("texture1", 0);
 	ourShader.setInt("texture2", 1);
 
-	glm::vec3 camPos = glm::vec3(0.0f, 0.0f, 3.0f);
-	glm::vec3 camTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 camDirection = glm::vec3(camPos - camTarget);//reverse for positive
-	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::vec3 camRight = glm::normalize(glm::cross(up, camDirection));
-	glm::vec3 camUp = glm::normalize(glm::cross(camDirection, camRight));
 
-	// render loop
-	// -----------
 	while (!glfwWindowShouldClose(window))
 	{
-		// input
-		// -----
+
 		processInput(window);
 
-		// render
-		// ------
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -234,9 +220,8 @@ int main()
 		glm::mat4 viewMat(1.0);
 		viewMat = glm::translate(viewMat, glm::vec3(0.0f, 0.0f,-3.0f));
 
-		viewMat = glm::lookAt(glm::vec3(cos(glfwGetTime())*5.0f,0.0f, sin(glfwGetTime())*5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		viewMat = glm::lookAt(camPos, camDirection ,camUp);
 
-		// get matrix's uniform location and set matrix
 		ourShader.use();
 		unsigned int loc = glGetUniformLocation(ourShader.ID, "modelMat");
 		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(modelMat));
@@ -245,7 +230,6 @@ int main()
 		loc = glGetUniformLocation(ourShader.ID, "projMat");
 		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(projMat));
 
-		// render container
 		glBindVertexArray(VAO);
 		for (int i = 0; i < 10; i++)
 		{
@@ -257,41 +241,49 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	// optional: de-allocate all resources once they've outlived their purpose:
-	// ------------------------------------------------------------------------
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
 
-	// glfw: terminate, clearing all previously allocated GLFW resources.
-	// ------------------------------------------------------------------
 	glfwTerminate();
 	return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
+float deltaTime = 0;
+float lastTime = 0;
+
 void processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+	float curTime = glfwGetTime();
+	deltaTime = curTime - lastTime;
+	lastTime = curTime;
+	float camspeed = 2.5f * deltaTime;
+	if (glfwGetKey(window,GLFW_KEY_W) == GLFW_PRESS)
+	{
+		camPos += camspeed * glm::normalize(camDirection);
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		camPos -= camspeed * glm::normalize(camDirection);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		camPos -= camspeed * glm::normalize(glm::cross(camDirection,camUp));
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		camPos += camspeed * glm::normalize(glm::cross(camDirection, camUp));
+	}
+
 }
 
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	// make sure the viewport matches the new window dimensions; note that width and 
-	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
 }
