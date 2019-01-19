@@ -14,6 +14,7 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 void mouseCallback(GLFWwindow* window, double xpos, double ypos);
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -87,8 +88,16 @@ glm::vec3 camTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 camDirection = glm::vec3( camTarget - camPos);//reverse for positive
 glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 camRight = glm::normalize(glm::cross(up, camDirection));
-glm::vec3 camUp = glm::normalize(glm::cross(camDirection, camRight));
+//glm::vec3 camUp = glm::normalize(glm::cross(camDirection, camRight));
+glm::vec3 camUp = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 camStraitFront = glm::vec3(0.0f, 0.0f, -1.0f);
+
+float lastX = 400, lastY = 300;
+
+bool isFirstIn = true;
+
+float yaw = 0.0, pitch = 0.0, roll = 0.0;
+float fov = 45.0;
 
 int main()
 {
@@ -114,6 +123,7 @@ int main()
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouseCallback);
+	glfwSetScrollCallback(window, scrollCallback);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -219,11 +229,9 @@ int main()
 		glm::mat4 modelMat(1.0);
 		modelMat = glm::rotate(modelMat, (float)-60.0, glm::vec3(1.0, 0.0, 0.0));
 		glm::mat4 projMat(1.0);
-		projMat = glm::perspective(glm::radians(45.0f), (float)(width / height), 0.1f, 100.0f);
+		projMat = glm::perspective(glm::radians(fov), (float)(width / height), 0.1f, 100.0f);
 		glm::mat4 viewMat(1.0);
-		viewMat = glm::translate(viewMat, glm::vec3(0.0f, 0.0f,-3.0f));
-
-		viewMat = glm::lookAt(camPos, camDirection ,camUp);
+		viewMat = glm::lookAt(camPos, camPos + camStraitFront,camUp);
 
 		ourShader.use();
 		unsigned int loc = glGetUniformLocation(ourShader.ID, "modelMat");
@@ -243,7 +251,6 @@ int main()
 			ourShader.setMat4("modelMat", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
-
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -269,19 +276,19 @@ void processInput(GLFWwindow *window)
 	float camspeed = 2.5f * deltaTime;
 	if (glfwGetKey(window,GLFW_KEY_W) == GLFW_PRESS)
 	{
-		camPos += camspeed * glm::normalize(camDirection);
+		camPos += camspeed * glm::normalize(camStraitFront);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		camPos -= camspeed * glm::normalize(camDirection);
+		camPos -= camspeed * glm::normalize(camStraitFront);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		camPos -= camspeed * glm::normalize(glm::cross(camDirection,camUp));
+		camPos -= camspeed * glm::normalize(glm::cross(camStraitFront,camUp));
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		camPos += camspeed * glm::normalize(glm::cross(camDirection, camUp));
+		camPos += camspeed * glm::normalize(glm::cross(camStraitFront, camUp));
 	}
 
 }
@@ -293,6 +300,39 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 {
+	if (isFirstIn)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		isFirstIn = false;
+	}
 
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // different coord
+
+	lastX = xpos;
+	lastY = ypos;
+
+	float sendsitivity = 0.05f;
+	xoffset *= sendsitivity;
+	yoffset *= sendsitivity;
+
+	yaw += xoffset;
+	pitch += yoffset;
+
+	glm::vec3 front;
+	front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+	front.y = sin(glm::radians(pitch));
+	front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+	camStraitFront = glm::normalize(front);
 }
 
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	if (fov >= 1.0f && fov <= 45.0f)
+		fov -= yoffset;
+	if (fov <= 1.0f)
+		fov = 1.0f;
+	if (fov >= 45.0f)
+		fov = 45.0f;
+}
