@@ -131,6 +131,10 @@ int main()
 		return -1;
 	}
 
+	glm::vec3 coral(0.33f, 0.42f, 0.18f);
+	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+	glm::vec3 result = lightColor * coral;
+
 
 	Shader ourShader("vertexShader.vs", "fragShader.fs");
 
