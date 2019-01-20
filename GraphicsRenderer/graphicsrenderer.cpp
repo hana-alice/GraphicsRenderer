@@ -97,7 +97,10 @@ int main()
 
 	Shader ourShader("vertexShader.vs", "fragShader.fs");
 
-	unsigned int VBO, VAO, EBO;
+	unsigned int objVBO, objVAO;
+	glGenBuffers(1, &objVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, objVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 
 	ourShader.use();
@@ -112,10 +115,7 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		GLuint vbo;
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		
 
 		
 		
