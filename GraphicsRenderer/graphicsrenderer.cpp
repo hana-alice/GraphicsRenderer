@@ -102,6 +102,12 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, objVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+	GLint objPosLoc,objColorLoc;
+	objPosLoc = glGetAttribLocation(ourShader.ID,"aPos");
+	objColorLoc = glGetUniformLocation(ourShader.ID, "inColor");
+	glVertexAttribPointer(objPosLoc, 3 * sizeof(float), GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+	glUniform4f(objColorLoc, 1.0f, 1.0f, 0.0f, 1.0f);
+	glEnableVertexAttribArray(objPosLoc);
 
 	ourShader.use();
 
@@ -114,7 +120,8 @@ int main()
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		glBindBuffer(GL_ARRAY_BUFFER, objVBO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 		
 
 		
@@ -123,9 +130,8 @@ int main()
 		glfwPollEvents();
 	}
 
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
+	glDeleteVertexArrays(1, &objVAO);
+	glDeleteBuffers(1, &objVBO);
 
 	glfwTerminate();
 	return 0;
