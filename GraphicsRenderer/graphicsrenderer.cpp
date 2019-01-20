@@ -61,6 +61,15 @@ float vertices[] = {
 	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
+glm::vec3 camPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 camTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 camDirection = glm::vec3(camTarget - camPos);//reverse for positive
+glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 camRight = glm::normalize(glm::cross(up, camDirection));
+//glm::vec3 camUp = glm::normalize(glm::cross(camDirection, camRight));
+glm::vec3 camUp = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 camStraitFront = glm::vec3(0.0f, 0.0f, -1.0f);
+
 int main()
 {
 
@@ -98,16 +107,23 @@ int main()
 	Shader ourShader("vertexShader.vs", "fragShader.fs");
 
 	unsigned int objVBO, objVAO;
+	glGenVertexArrays(1, &objVAO);
+	glBindVertexArray(objVAO);
 	glGenBuffers(1, &objVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, objVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	GLint objPosLoc,objColorLoc;
-	objPosLoc = glGetAttribLocation(ourShader.ID,"aPos");
+	GLint objPosLoc, objColorLoc;
+	objPosLoc = glGetAttribLocation(ourShader.ID, "aPos");
 	objColorLoc = glGetUniformLocation(ourShader.ID, "inColor");
-	glVertexAttribPointer(objPosLoc, 3 * sizeof(float), GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
-	glUniform4f(objColorLoc, 1.0f, 1.0f, 0.0f, 1.0f);
 	glEnableVertexAttribArray(objPosLoc);
+
+	glm::mat4 modelMat(1.0f), projMat(1.0f), viewMat(1.0f);
+	modelMat = glm::rotate(modelMat, (float)-60, glm::vec3(1.0f, 0.0f, 0.0f));
+	projMat = glm::perspective(glm::radians(45.0f), float(SCR_WIDTH / SCR_HEIGHT), 0.1f, 100.0f);
+	viewMat = glm::lookAt(camPos, camPos + camStraitFront, camUp);
+
+	
 
 	ourShader.use();
 
@@ -120,10 +136,24 @@ int main()
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBindBuffer(GL_ARRAY_BUFFER, objVBO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		
 
+		
+		ourShader.use();
+		glBindVertexArray(objVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, objVBO);
+
+		GLint modelLoc, viewLoc, projLoc;
+		modelLoc = glGetUniformLocation(ourShader.ID, "model");
+		viewLoc = glGetUniformLocation(ourShader.ID, "view");
+		projLoc = glGetUniformLocation(ourShader.ID, "projection");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMat));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMat));
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projMat));
+
+		glVertexAttribPointer(objPosLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+		glUniform4f(objColorLoc, 1.0f, 1.0f, 0.0f, 1.0f);
+
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 		
 		
 		glfwSwapBuffers(window);
