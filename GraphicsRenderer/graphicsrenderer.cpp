@@ -103,7 +103,6 @@ int main()
 	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 	glm::vec3 result = lightColor * coral;
 
-
 	Shader ourShader("vertexShader.vs", "fragShader.fs");
 
 	unsigned int objVBO, objVAO;
