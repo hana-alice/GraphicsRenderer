@@ -10,55 +10,77 @@
 #include <shader.h>
 
 #include <iostream>
-//TODO: rebuild all
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
+void mouseCallback(GLFWwindow* window, double xpos, double ypos);
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+
+glm::vec3 cubePositions[] = {
+  glm::vec3(0.0f,  0.0f,  0.0f),
+  glm::vec3(2.0f,  5.0f, -15.0f),
+  glm::vec3(-1.5f, -2.2f, -2.5f),
+  glm::vec3(-3.8f, -2.0f, -12.3f),
+  glm::vec3(2.4f, -0.4f, -3.5f),
+  glm::vec3(-1.7f,  3.0f, -7.5f),
+  glm::vec3(1.3f, -2.0f, -2.5f),
+  glm::vec3(1.5f,  2.0f, -2.5f),
+  glm::vec3(1.5f,  0.2f, -1.5f),
+  glm::vec3(-1.3f,  1.0f, -1.5f)
+};
+
+// set up vertex data (and buffer(s)) and configure vertex attributes
+	// ------------------------------------------------------------------
 float vertices[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+ 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+ 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+ 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+ 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+ 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+ 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
 
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+ 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+ 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+ 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+ 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+ 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+ 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+ 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+ 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+ 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
 
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+ 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+ 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+ 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+};
+unsigned int indices[] = {
+	0, 1, 3, // first triangle
+	1, 2, 3  // second triangle
 };
 
 glm::vec3 camPos = glm::vec3(0.0f, 0.0f, 3.0f);
@@ -69,14 +91,27 @@ glm::vec3 camRight = glm::normalize(glm::cross(up, camDirection));
 //glm::vec3 camUp = glm::normalize(glm::cross(camDirection, camRight));
 glm::vec3 camUp = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 camStraitFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
+float lastX = 400, lastY = 300;
+
+bool isFirstIn = true;
+
+float yaw = 0.0, pitch = 0.0, roll = 0.0;
+float fov = 45.0;
+// lighting
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 int main()
 {
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+#ifdef __APPLE__
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
+#endif
+
 
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
 	if (window == NULL)
@@ -87,6 +122,9 @@ int main()
 	}
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetCursorPosCallback(window, mouseCallback);
+	glfwSetScrollCallback(window, scrollCallback);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -94,44 +132,30 @@ int main()
 		return -1;
 	}
 
-	glm::vec3 coral(0.33f, 0.42f, 0.18f);
-	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
-	glm::vec3 result = lightColor * coral;
-
 
 	Shader objShader("vertexShader.vs", "fragShader.fs");
 
 	unsigned int objVBO, objVAO, objEBO;
 	glGenVertexArrays(1, &objVAO);
-	glBindVertexArray(objVAO);
 	glGenBuffers(1, &objVBO);
 	glGenBuffers(1, &objEBO);
+
 	glBindVertexArray(objVAO);
+
 	glBindBuffer(GL_ARRAY_BUFFER, objVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	GLint objPosLoc, objColorLoc;
-	objPosLoc = glGetAttribLocation(objShader.ID, "aPos");
-	objColorLoc = glGetUniformLocation(objShader.ID, "inColor");
-	glEnableVertexAttribArray(objPosLoc);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	glm::mat4 modelMat(1.0f), projMat(1.0f), viewMat(1.0f);
-	modelMat = glm::rotate(modelMat, (float)-60, glm::vec3(1.0f, 0.0f, 0.0f));
-	projMat = glm::perspective(glm::radians(45.0f), float(SCR_WIDTH / SCR_HEIGHT), 0.1f, 100.0f);
-	viewMat = glm::lookAt(camPos, camPos + camStraitFront, camUp);
+	GLint posLoc = glGetAttribLocation(objShader.ID, "aPos");
+	glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(posLoc);
+	glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(posLoc);
+	
 
-	objShader.use();
 
-	unsigned int lightVAO;
-	glGenVertexArrays(1, &lightVAO);
-	glBindVertexArray(lightVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, objVBO);//same with object
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), 0);
-	glEnableVertexAttribArray(0);
-	Shader lightShader("vertexShader.vs", "fragShader.fs");
-	lightShader.use();
-	lightShader.setVec3("lightColor", 1.0f, 0.5f, 0.31f);
-	lightShader.setVec3("objColor", 1.0f, 1.0f, 1.0f);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -143,33 +167,71 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
+		glm::mat4 modelMat(1.0);
+		modelMat = glm::rotate(modelMat, (float)-60.0, glm::vec3(1.0, 0.0, 0.0));
+		glm::mat4 projMat(1.0);
+		projMat = glm::perspective(glm::radians(fov), (float)(SCR_WIDTH / SCR_HEIGHT),0.1f, 100.0f);
+		glm::mat4 viewMat(1.0);
+		viewMat = glm::lookAt(camPos, camPos + camStraitFront, camUp);
+
 		objShader.use();
+		unsigned int loc = glGetUniformLocation(objShader.ID, "model");
+		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(modelMat));
+		loc = glGetUniformLocation(objShader.ID, "view");
+		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(viewMat));
+		loc = glGetUniformLocation(objShader.ID, "projection");
+		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(projMat));
+		
+		float fragcolor[] = { 1.0f,1.0f,0.0f,1.0f };
+		GLint colorLoc = glGetUniformLocation(objShader.ID, "inColor");
+		glUniform4fv(colorLoc, 1, fragcolor);
+		glEnableVertexAttribArray(colorLoc);
+		
+
 		glBindVertexArray(objVAO);
-		glBindBuffer(GL_ARRAY_BUFFER, objVBO);
-
-		GLint modelLoc, viewLoc, projLoc;
-		modelLoc = glGetUniformLocation(objShader.ID, "model");
-		viewLoc = glGetUniformLocation(objShader.ID, "view");
-		projLoc = glGetUniformLocation(objShader.ID, "projection");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMat));
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMat));
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projMat));
-
-		glVertexAttribPointer(objPosLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
-		glUniform4f(objColorLoc, 1.0f, 1.0f, 0.0f, 1.0f);
-
+		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
+		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
 	glDeleteVertexArrays(1, &objVAO);
 	glDeleteBuffers(1, &objVBO);
+	glDeleteBuffers(1, &objEBO);
 
 	glfwTerminate();
 	return 0;
+}
+
+float deltaTime = 0;
+float lastTime = 0;
+
+void processInput(GLFWwindow *window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+	float curTime = glfwGetTime();
+	deltaTime = curTime - lastTime;
+	lastTime = curTime;
+	float camspeed = 2.5f * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		camPos += camspeed * glm::normalize(camStraitFront);
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		camPos -= camspeed * glm::normalize(camStraitFront);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		camPos -= camspeed * glm::normalize(glm::cross(camStraitFront, camUp));
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		camPos += camspeed * glm::normalize(glm::cross(camStraitFront, camUp));
+	}
+
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -177,8 +239,41 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow *window)
+void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
+	if (isFirstIn)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		isFirstIn = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // different coord
+
+	lastX = xpos;
+	lastY = ypos;
+
+	float sendsitivity = 0.05f;
+	xoffset *= sendsitivity;
+	yoffset *= sendsitivity;
+
+	yaw += xoffset;
+	pitch += yoffset;
+
+	glm::vec3 front;
+	front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+	front.y = sin(glm::radians(pitch));
+	front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+	camStraitFront = glm::normalize(front);
+}
+
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	if (fov >= 1.0f && fov <= 45.0f)
+		fov -= yoffset;
+	if (fov <= 1.0f)
+		fov = 1.0f;
+	if (fov >= 45.0f)
+		fov = 45.0f;
 }
