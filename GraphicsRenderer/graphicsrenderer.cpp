@@ -100,6 +100,10 @@ float yaw = 0.0, pitch = 0.0, roll = 0.0;
 float fov = 45.0;
 // lighting
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+
+glm::vec3 lightColor(0.0f, 1.0f, 0.0f);
+glm::vec3 toyColor(1.0f, 0.5f, 0.31f);
+glm::vec3 result = lightColor * toyColor; // = (0.0f, 0.5f, 0.0f);
 int main()
 {
 
@@ -154,6 +158,14 @@ int main()
 	glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(posLoc);
 	
+	Shader lightShader("lightVertexShader.vs", "lightFragShader.fs");
+	unsigned int lightVAO;
+	glGenVertexArrays(1, &lightVAO);
+	glBindVertexArray(lightVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, objVBO);
+	posLoc = glGetAttribLocation(lightShader.ID, "aPos");
+	glVertexAttribPointer(posLoc, 3, GL_FLOAT,GL_FALSE, 5 * sizeof(float), 0);
+	glEnableVertexAttribArray(posLoc);
 
 
 
@@ -169,6 +181,7 @@ int main()
 
 		glm::mat4 modelMat(1.0);
 		modelMat = glm::rotate(modelMat, (float)-60.0, glm::vec3(1.0, 0.0, 0.0));
+		
 		glm::mat4 projMat(1.0);
 		projMat = glm::perspective(glm::radians(fov), (float)(SCR_WIDTH / SCR_HEIGHT),0.1f, 100.0f);
 		glm::mat4 viewMat(1.0);
@@ -186,12 +199,21 @@ int main()
 		GLint colorLoc = glGetUniformLocation(objShader.ID, "inColor");
 		glUniform4fv(colorLoc, 1, fragcolor);
 		glEnableVertexAttribArray(colorLoc);
-		
-
 		glBindVertexArray(objVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		lightShader.use();
+		glBindVertexArray(lightVAO);
+		modelMat = glm::translate(modelMat, lightPos);
+		modelMat = glm::scale(modelMat, glm::vec3(0.2f));
+		loc = glGetUniformLocation(lightShader.ID, "model");
+		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(modelMat));
+		loc = glGetUniformLocation(lightShader.ID, "view");
+		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(viewMat));
+		loc = glGetUniformLocation(lightShader.ID, "projection");
+		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(projMat));
 		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -260,9 +282,14 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 
 	yaw += xoffset;
 	pitch += yoffset;
-
+	
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+	if (pitch < -89.0f)
+		pitch = -89.0f;
+	
 	glm::vec3 front;
-	front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 	front.y = sin(glm::radians(pitch));
 	front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
 	camStraitFront = glm::normalize(front);
