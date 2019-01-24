@@ -123,6 +123,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fragShader.fs" />
+    <None Include="lightFragShader.fs" />
+    <None Include="lightVertexShader.vs" />
     <None Include="vertexShader.vs" />
   </ItemGroup>
   <ItemGroup>
