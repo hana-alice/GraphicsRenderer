@@ -37,47 +37,47 @@ glm::vec3 cubePositions[] = {
 	// ------------------------------------------------------------------
 float vertices[] =
 {
--0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
--0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
--0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
--0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
--0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
--0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
 
--0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
--0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
--0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
--0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
--0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
--0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
-0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
--0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
-0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
-0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
--0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
--0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
--0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
--0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
--0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 };
 unsigned int indices[] = {
 	0, 1, 3, // first triangle
@@ -176,13 +176,12 @@ int main()
 
 		processInput(window);
 
-		glEnable(GL_DEPTH_TEST);
+		
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		glEnable(GL_DEPTH_TEST);
 
 		glm::mat4 modelMat(1.0);
-		modelMat = glm::rotate(modelMat, (float)-60.0, glm::vec3(1.0, 0.0, 0.0));
 		
 		glm::mat4 projMat(1.0);
 		projMat = glm::perspective(glm::radians(fov), (float)(SCR_WIDTH / SCR_HEIGHT),0.1f, 100.0f);
@@ -202,6 +201,11 @@ int main()
 		glUniform3f(loc, 1.0f, 1.0f, 1.0f);
 		loc = glGetUniformLocation(objShader.ID, "objectColor");
 		glUniform3f(loc, 1.0f, 0.5f, 0.31f);
+		loc = glGetUniformLocation(objShader.ID, "lightPos");
+		glUniform3fv(loc,1, glm::value_ptr(lightPos));
+		loc = glGetUniformLocation(objShader.ID, "viewPos");
+		glUniform3fv(loc, 1, glm::value_ptr(camPos));
+
 		glBindVertexArray(objVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -215,7 +219,6 @@ int main()
 		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(viewMat));
 		loc = glGetUniformLocation(lightShader.ID, "projection");
 		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(projMat));
-		
 		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glfwSwapBuffers(window);
