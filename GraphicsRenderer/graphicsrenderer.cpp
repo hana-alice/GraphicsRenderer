@@ -163,6 +163,7 @@ int main()
 	int width, height, nComp, specMapWidth, specMapHeight, specMapComp;
 	unsigned char* diffMap = stbi_load("./Resources/container2_specular.png", &width, &height, &nComp, 0);
 	unsigned char* specMap = stbi_load("./Resources/container2.png", &width, &height, &nComp, 0);
+	
 	GLenum format;
 	if (nComp == 1)
 		format = GL_RED;
@@ -213,7 +214,6 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
-
 		glm::mat4 modelMat(1.0);
 		
 		glm::mat4 projMat(1.0);
@@ -249,11 +249,11 @@ int main()
 		glUniform3fv(loc, 1, glm::value_ptr(diffuseColor));
 		loc = glGetUniformLocation(objShader.ID, "light.specular");
 		glUniform3f(loc, 1.0f, 1.0f, 1.0f);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texId);
+		
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texId2);
-		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texId);
 		glBindVertexArray(objVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
