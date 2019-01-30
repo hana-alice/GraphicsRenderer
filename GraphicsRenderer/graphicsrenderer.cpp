@@ -161,9 +161,8 @@ int main()
 	glVertexAttribPointer(texLoc, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(texLoc);
 	int width, height, nComp, specMapWidth, specMapHeight, specMapComp;
-	unsigned char* diffMap = stbi_load("./Resources/container2_specular.png", &width, &height, &nComp, 0);
-	unsigned char* specMap = stbi_load("./Resources/container2.png", &width, &height, &nComp, 0);
 	
+	unsigned char* diffMap = stbi_load("./Resources/container2.png", &width, &height, &nComp, 0);
 	GLenum format;
 	if (nComp == 1)
 		format = GL_RED;
@@ -172,6 +171,7 @@ int main()
 	else if (nComp == 4)
 		format = GL_RGBA;
 	unsigned int texId,texId2;
+	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &texId);
 	glBindTexture(GL_TEXTURE_2D, texId);
 	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, diffMap);
@@ -180,9 +180,10 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glActiveTexture(GL_TEXTURE0);
 	STBI_FREE(diffMap);
 
+	unsigned char* specMap = stbi_load("./Resources/container2_specular.png", &width, &height, &nComp, 0);
+	glActiveTexture(GL_TEXTURE1);
 	glGenTextures(1, &texId2);
 	glBindTexture(GL_TEXTURE_2D, texId2);
 	glTexImage2D(GL_TEXTURE_2D, 0, format, specMapWidth, specMapHeight, 0, format, GL_UNSIGNED_BYTE, specMap);
@@ -191,7 +192,6 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glActiveTexture(GL_TEXTURE1);
 	STBI_FREE(specMap);
 	
 	Shader lightShader("lightVertexShader.vs", "lightFragShader.fs");
@@ -202,7 +202,6 @@ int main()
 	posLoc = glGetAttribLocation(lightShader.ID, "aPos");
 	glVertexAttribPointer(posLoc, 3, GL_FLOAT,GL_FALSE, 8 * sizeof(float), 0);
 	glEnableVertexAttribArray(posLoc);
-
 
 
 	while (!glfwWindowShouldClose(window))
@@ -249,11 +248,11 @@ int main()
 		glUniform3fv(loc, 1, glm::value_ptr(diffuseColor));
 		loc = glGetUniformLocation(objShader.ID, "light.specular");
 		glUniform3f(loc, 1.0f, 1.0f, 1.0f);
-		
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texId2);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texId);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texId2);
+		
 		glBindVertexArray(objVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
