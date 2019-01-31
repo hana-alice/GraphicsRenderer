@@ -183,6 +183,15 @@ int main()
 	STBI_FREE(diffMap);
 
 	unsigned char* specMap = stbi_load("./Resources/container2_specular.png", &width, &height, &nComp, 0);
+	for (int i = 3; i < width * height * 4; i += 4)
+	{
+		if (specMap[i] == 0)
+		{
+			specMap[i - 1] = 0;
+			specMap[i - 2] = 0;
+			specMap[i - 3] = 0;
+		}
+	}
 	glActiveTexture(GL_TEXTURE1);
 	glGenTextures(1, &texId2);
 	glBindTexture(GL_TEXTURE_2D, texId2);
@@ -193,6 +202,7 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	STBI_FREE(specMap);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	
 	Shader lightShader("lightVertexShader.vs", "lightFragShader.fs");
 	unsigned int lightVAO;
@@ -248,8 +258,8 @@ int main()
 		glUniform3fv(loc, 1, glm::value_ptr(diffuseColor));
 		loc = glGetUniformLocation(objShader.ID, "light.specular");
 		glUniform3f(loc, 1.0f, 1.0f, 1.0f);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texId);
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, texId);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texId2);
 		

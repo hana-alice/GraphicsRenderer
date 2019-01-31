@@ -39,11 +39,8 @@ void main()
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 	vec4 colorvec = texture(material.specular,TexCoords);
 	vec3 specular = light.specular * spec * texture(material.specular,TexCoords).rgb;
-	if(colorvec.r < 0.2 && colorvec.g < 0.2 && colorvec.b < 0.2)
-		specular=vec3(0.0f);
-    vec3 result =  diffuse + ambient + specular;
+
+    vec3 result =  ambient + specular;
     FragColor = vec4(result, 1.0);
 	
-    
-    
 }
