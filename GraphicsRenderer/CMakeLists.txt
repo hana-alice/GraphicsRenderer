@@ -1,7 +1,10 @@
 PROJECT(main)
-CMAKE_MINIMUM_REQUIRED(2.6)
-ADD_SUBDIRECTORY(dependencies/impl)
-ADD_SUBDIRECTORY(dependencies/include)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+include_directories(./)
+include_directories(./dependencies/include)
+include_directories(./dependencies/include/stbimg)
+
+ADD_SUBDIRECTORY(dependencies)
 AUX_SOURCE_DIRECTORY(. DIR_SRCS)
 ADD_EXECUTABLE(main ${DIR_SRCS})
 TARGET_LINK_LIBRARIES(main Test)
