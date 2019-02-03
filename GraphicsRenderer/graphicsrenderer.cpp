@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 #include <glm/glm.hpp>
@@ -78,8 +79,8 @@ int main()
 
     // build and compile our shader zprogram
     // ------------------------------------
-    Shader lightingShader("4.2.lighting_maps.vs", "4.2.lighting_maps.fs");
-    Shader lampShader("4.2.lamp.vs", "4.2.lamp.fs");
+    Shader lightingShader("vertexShader.vs", "fragShader.fs");
+    Shader lampShader("lightVertexShader.vs", "lightFragShader.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -155,8 +156,9 @@ int main()
 
     // load textures (we now use a utility function to keep the code more organized)
     // -----------------------------------------------------------------------------
-    unsigned int diffuseMap = loadTexture(FileSystem::getPath("resources/textures/container2.png").c_str());
-    unsigned int specularMap = loadTexture(FileSystem::getPath("resources/textures/container2_specular.png").c_str());
+
+    unsigned int diffuseMap = loadTexture("./Resources/container2.png");
+    unsigned int specularMap = loadTexture("./Resources/container2_specular.png");
 
     // shader configuration
     // --------------------
