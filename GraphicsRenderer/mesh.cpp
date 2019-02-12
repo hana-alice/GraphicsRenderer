@@ -1,6 +1,7 @@
 #include "mesh.h"
 
 Mesh::Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+<<<<<<< HEAD
 	:m_vertices(vertices),m_indices(indices),m_textures(textures)
 {
 	setupMesh();
@@ -34,10 +35,16 @@ void Mesh::draw(Shader shader)
 	glBindVertexArray(m_vao);
 	glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+=======
+    :m_vertices(vertices),m_indices(indices),m_textures(textures)
+{
+    setupMesh();
+>>>>>>> 956180624d7087a8fd3c8f9c851cb601de5c527e
 }
 
 void Mesh::setupMesh()
 {
+<<<<<<< HEAD
 	glGenVertexArrays(1, &m_vao);
 	glGenBuffers(1, &m_vbo);
 	glGenBuffers(1, &m_ebo);
@@ -62,3 +69,7 @@ void Mesh::setupMesh()
 	glBindVertexArray(0);
 
 }
+=======
+    
+}
+>>>>>>> 956180624d7087a8fd3c8f9c851cb601de5c527e
