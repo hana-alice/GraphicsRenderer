@@ -9,6 +9,12 @@
 
 using namespace std;
 
+enum TEXTURE_TYPE
+{
+	DIFFUSE,
+	TEXTURE
+};
+
 struct Vertex
 {
     glm::vec3 positon;
@@ -19,7 +25,7 @@ struct Vertex
 struct Texture
 {
     unsigned int id;
-    string type;
+	TEXTURE_TYPE type;
 };
 
 class Mesh
@@ -35,7 +41,7 @@ public:
 private:
     unsigned int m_vao;
     unsigned int m_vbo;
-    unsigned int m_eao;
+    unsigned int m_ebo;
     void setupMesh();
 };
 #endif

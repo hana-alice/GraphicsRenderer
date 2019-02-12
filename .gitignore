@@ -272,3 +272,6 @@ CTestTestfile.cmake
 DartConfiguration.tcl
 main
 **/build
+*.user
+*.vcxproj
+*.filters
