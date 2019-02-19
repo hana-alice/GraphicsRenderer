@@ -1,7 +1,8 @@
 #pragma once
-
 #include "mesh.h"
-#include " "
+#include "assimp/Improter.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
 
 class Model
 {
