@@ -18,7 +18,7 @@ class Model
     string m_directory;
 
     void loadModel(std::string path);
-    void processMode();
+    void processNode();
     
 
 }
