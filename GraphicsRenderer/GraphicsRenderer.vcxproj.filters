@@ -55,6 +55,12 @@
     <None Include="lightFragShader.fs">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="modelvs.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="modelfs.fs">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="graphicsrenderer.cpp">
