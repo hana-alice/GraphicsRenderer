@@ -55,10 +55,13 @@
     <None Include="lightFragShader.fs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="modelvs.vs">
+    <None Include="stenciltest.vs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="modelfs.fs">
+    <None Include="stenciltest.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="stencilsingle.fs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -69,21 +72,9 @@
     <ClCompile Include="dependencies\impl\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
