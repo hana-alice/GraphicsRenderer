@@ -7,3 +7,4 @@ I should remember tonight every single guilty night.
 2019/2/11
 2019/2/18 overwork and compile assimp
 2/22+23 reading depth func
+2/25 surface culling and alpha test
