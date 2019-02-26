@@ -1,0 +1,6 @@
+D:/dev/projs/GraphicsRenderer/GraphicsRenderer/GraphicsRenderer/build/CMakeFiles/edit_cache.dir
+D:/dev/projs/GraphicsRenderer/GraphicsRenderer/GraphicsRenderer/build/CMakeFiles/main.dir
+D:/dev/projs/GraphicsRenderer/GraphicsRenderer/GraphicsRenderer/build/CMakeFiles/rebuild_cache.dir
+D:/dev/projs/GraphicsRenderer/GraphicsRenderer/GraphicsRenderer/build/dependencies/CMakeFiles/GLAD.dir
+D:/dev/projs/GraphicsRenderer/GraphicsRenderer/GraphicsRenderer/build/dependencies/CMakeFiles/edit_cache.dir
+D:/dev/projs/GraphicsRenderer/GraphicsRenderer/GraphicsRenderer/build/dependencies/CMakeFiles/rebuild_cache.dir

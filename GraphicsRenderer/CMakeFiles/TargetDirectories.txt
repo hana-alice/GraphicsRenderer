@@ -1,0 +1,4 @@
+D:/dev/projs/GraphicsRenderer/GraphicsRenderer/GraphicsRenderer/CMakeFiles/main.dir
+D:/dev/projs/GraphicsRenderer/GraphicsRenderer/GraphicsRenderer/CMakeFiles/ALL_BUILD.dir
+D:/dev/projs/GraphicsRenderer/GraphicsRenderer/GraphicsRenderer/CMakeFiles/ZERO_CHECK.dir
+D:/dev/projs/GraphicsRenderer/GraphicsRenderer/GraphicsRenderer/dependencies/CMakeFiles/GLAD.dir
