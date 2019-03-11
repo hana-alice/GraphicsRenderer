@@ -123,6 +123,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fragShader.fs" />
+    <None Include="frmbuf.fs" />
+    <None Include="frmbuf.vs" />
+    <None Include="frmbuf_scr.fs" />
+    <None Include="frmbuf_scr.vs" />
     <None Include="lightFragShader.fs" />
     <None Include="lightVertexShader.vs" />
     <None Include="stencilsingle.fs" />

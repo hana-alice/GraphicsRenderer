@@ -64,6 +64,18 @@
     <None Include="stencilsingle.fs">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="frmbuf.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="frmbuf.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="frmbuf_scr.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="frmbuf_scr.fs">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="graphicsrenderer.cpp">
