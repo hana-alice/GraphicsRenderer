@@ -30,25 +30,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="graphicsrenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="glrenderwidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="graphicsrenderer.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="glrenderwidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
     <QtUic Include="graphicsrenderer.ui">
       <Filter>Form Files</Filter>
     </QtUic>
@@ -62,16 +43,39 @@
     </QtRcc>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="vertex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="fragShader.fs">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="vertexShader.vs">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="lightVertexShader.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="lightFragShader.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="stenciltest.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="stenciltest.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="stencilsingle.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="graphicsrenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\impl\glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
