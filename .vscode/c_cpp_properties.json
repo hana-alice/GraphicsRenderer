@@ -4,6 +4,7 @@
             "name": "win64",
             "includePath": [
                 "${workspaceFolder}/**",
+                "${workspaceFolder}/Header",
                 "${workspaceFolder}/dependencies/include/**",
                 "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Tools/MSVC/14.20.27508/include",
                 "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Tools/MSVC/14.20.27508/atlmfc/include",

@@ -5,17 +5,17 @@ include(CTest)
 enable_testing()
 include_directories(
     "${PROJECT_SOURCE_DIR}/dependencies/include"
+    "${PROJECT_SOURCE_DIR}/Header"
 )
 link_directories(${PROJECT_SOURCE_DIR}/dependencies/lib)
 link_libraries(glfw3 glfw3dll)
 
-aux_source_directory(${PROJECT_SOURCE_DIR}/dependencies/impl/ DIR_LIB_SRCS)
-add_library (glad ${DIR_LIB_SRCS})
-
+add_subdirectory(${PROJECT_SOURCE_DIR}/dependencies/impl/)
+add_subdirectory(${PROJECT_SOURCE_DIR}/source)
 
 add_executable(GraphicsRenderer source/graphicsrenderer.cpp)
 
-target_link_libraries(GraphicsRenderer glad)
+target_link_libraries(GraphicsRenderer glad internal)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
