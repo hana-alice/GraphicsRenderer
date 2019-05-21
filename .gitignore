@@ -276,4 +276,4 @@ main
 *.vcxproj
 *.filters
 *.vcproj
-*/.vscode
+*/.vscode/ipch
