@@ -27,6 +27,12 @@ public:
     void init();
 
     void render();
+
+    //TODO:
+    // createShader();
+    //createProgram();
+    //destroyShader();
+    //destroyProgram();
 private:
     std::vector<InitFunc> m_initFuncVec;
     std::vector<RenderFunc> m_renderFuncVec;
