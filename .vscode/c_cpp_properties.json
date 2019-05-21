@@ -1,15 +1,39 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "name": "win64",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/dependencies/include/**",
+                "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Tools/MSVC/14.20.27508/include",
+                "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Tools/MSVC/14.20.27508/atlmfc/include",
+                "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Auxiliary/VS/include",
+                "D:/Windows Kits/10/Include/10.0.17763.0/ucrt",
+                "D:/Windows Kits/10/Include/10.0.17763.0/um",
+                "D:/Windows Kits/10/Include/10.0.17763.0/shared",
+                "D:/Windows Kits/10/Include/10.0.17763.0/winrt",
+                "D:/Windows Kits/10/Include/10.0.17763.0/cppwinrt",
+                "D:/dev/projs/GraphicsRenderer/dependencies/include"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "intelliSenseMode": "clang-x64"
+            "intelliSenseMode": "clang-x64",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "${workspaceFolder}/dependencies/include/**",
+                    "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Tools/MSVC/14.20.27508/include",
+                    "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Tools/MSVC/14.20.27508/atlmfc/include",
+                    "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Auxiliary/VS/include",
+                    "D:/Windows Kits/10/Include/10.0.17763.0/ucrt",
+                    "D:/Windows Kits/10/Include/10.0.17763.0/um",
+                    "D:/Windows Kits/10/Include/10.0.17763.0/shared",
+                    "D:/Windows Kits/10/Include/10.0.17763.0/winrt",
+                    "D:/Windows Kits/10/Include/10.0.17763.0/cppwinrt"
+                    
+                ]
+            }
         }
     ],
     "version": 4
