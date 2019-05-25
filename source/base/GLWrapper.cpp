@@ -11,6 +11,15 @@ GLWrapper::~GLWrapper()
 
 }
 
+void GLWrapper::errorCheck()
+{
+    GLenum errtype = glGetError();
+    if (errtype != GL_NO_ERROR)
+    {
+        std::cout << errtype << std::endl;
+    }
+}
+
 bool GLWrapper::registerInitFunc(InitFunc f)
 {
     if(std::find(m_initFuncVec.begin(),m_initFuncVec.end(),f) != m_initFuncVec.end())

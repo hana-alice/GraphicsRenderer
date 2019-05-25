@@ -11,6 +11,8 @@ public:
     GLWrapper();
     ~GLWrapper();
 
+    static void errorCheck();
+
     bool registerInitFunc(InitFunc func);
     template <typename T,typename F>
     bool registerInitFunc(T* t, F* f)
