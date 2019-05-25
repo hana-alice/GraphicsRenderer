@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include <vector>
+#include "glad/glad.h"
 
 typedef void (*InitFunc)();
 typedef void (*RenderFunc)();
@@ -29,8 +30,9 @@ public:
     void render();
 
     //TODO:
-    // createShader();
-    //createProgram();
+    GLuint createShader(int type, const char* shaderSrc);
+    
+    GLuint createProgram(int vertexShader, int fragmentShader);
     //destroyShader();
     //destroyProgram();
 private:

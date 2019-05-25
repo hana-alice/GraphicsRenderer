@@ -32,9 +32,9 @@
                     "D:/Windows Kits/10/Include/10.0.17763.0/shared",
                     "D:/Windows Kits/10/Include/10.0.17763.0/winrt",
                     "D:/Windows Kits/10/Include/10.0.17763.0/cppwinrt"
-                    
                 ]
-            }
+            },
+            "configurationProvider": "vector-of-bool.cmake-tools"
         }
     ],
     "version": 4

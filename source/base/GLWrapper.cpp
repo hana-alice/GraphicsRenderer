@@ -1,4 +1,5 @@
 #include "GLWrapper.h"
+#include <iostream>
 
 GLWrapper::GLWrapper()
 {
@@ -38,4 +39,27 @@ void GLWrapper::render()
 {
     for (RenderFunc f : m_renderFuncVec)
         f();
+}
+
+GLuint GLWrapper::createShader(int type, const char* shaderSrc)
+{
+    unsigned int shader = glCreateShader(type);
+    glShaderSource(shader,1,&shaderSrc,NULL);
+    glCompileShader(shader);
+
+    GLint success;
+    GLchar infoLog[1024];
+    glGetShaderiv(shader,GL_COMPILE_STATUS,&success);
+    if(!success)
+    {
+        glGetShaderInfoLog(shader,1024,NULL,infoLog);
+        std::cout << "compile Err:\n" << infoLog;
+    }
+    
+    return 0;
+}
+
+GLuint GLWrapper::createProgram(int vertexShader, int fragmentShader)
+{
+    return 0;
 }
