@@ -64,11 +64,18 @@ GLuint GLWrapper::createShader(int type, const char* shaderSrc)
         glGetShaderInfoLog(shader,1024,NULL,infoLog);
         std::cout << "compile Err:\n" << infoLog;
     }
-    
-    return 0;
+    errorCheck();
+    return shader;
 }
 
 GLuint GLWrapper::createProgram(int vertexShader, int fragmentShader)
 {
-    return 0;
+    GLuint pgm = glCreateProgram();
+    glAttachShader(pgm,vertexShader);
+    glAttachShader(pgm,fragmentShader);
+    glLinkProgram(pgm);
+    errorCheck();
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    return pgm;
 }
