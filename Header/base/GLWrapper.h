@@ -5,6 +5,8 @@
 
 typedef void (*InitFunc)();
 typedef void (*RenderFunc)();
+typedef void (*preRenderFunc)();
+typedef void (*afterRenderFunc)();
 class GLWrapper
 {
 public:
@@ -26,6 +28,9 @@ public:
     {
         registerRenderFunc(f,t);
     }
+
+    bool registerPreFuncRender(preRenderFunc func);
+    
 
     void init();
 

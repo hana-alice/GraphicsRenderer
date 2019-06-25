@@ -1,5 +1,6 @@
 #include "Singleton.h"
 
+Singleton* Singleton::s_instance = NULL;
 Singleton::Singleton()
 :m_glWrapper(nullptr)
 {

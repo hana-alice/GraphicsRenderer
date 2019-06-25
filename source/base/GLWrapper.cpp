@@ -1,9 +1,10 @@
 #include "GLWrapper.h"
 #include <iostream>
+#include "Singleton.h"
 
 GLWrapper::GLWrapper()
 {
-
+    Singleton::get
 }
 
 GLWrapper::~GLWrapper()
