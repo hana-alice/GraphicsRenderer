@@ -1,22 +1,20 @@
 #pragma once
-
+#include "glad\glad.h"
 #include "Singleton.h"
-#include "glad/glad.h"
 
-class SampleBox
+class Cube
 {
-    public:
-	SampleBox();
-	~SampleBox();
+public:
+    Cube(/* args */);
+    ~Cube();
 
-	void init();
+    void init();
 
 	void render();
 
 	void destroy();
-
 private:
-	GLWrapper* m_glWrapper;
+    GLWrapper* m_glWrapper;
 	GLuint m_vertexShader;
 	GLuint m_fragmentShader;
 	GLuint m_program;

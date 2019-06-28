@@ -1,12 +1,13 @@
 #pragma once
 #include <functional>
 #include <vector>
-#include "glad/glad.h"
+#include "glad\glad.h"
 
-typedef void (*InitFunc)();
-typedef void (*RenderFunc)();
-typedef void (*preRenderFunc)();
-typedef void (*afterRenderFunc)();
+typedef std::function<void(void)> RenderFunc;
+typedef std::function<void(void)> InitFunc;
+typedef std::function<void(void)> preRenderFunc;
+typedef std::function<void(void)> afterRenderFunc;
+typedef std::function<void(void)> DestroyFunc;
 class GLWrapper
 {
 public:
@@ -15,22 +16,28 @@ public:
 
     static void errorCheck();
 
-    bool registerInitFunc(InitFunc func);
+    void registerInitFunc(InitFunc func);
     template <typename T,typename F>
-    bool registerInitFunc(T* t, F* f)
+    void registerInitFunc(T* t, F f)
     {
         registerInitFunc(std::bind(f,t));
     }
 
-    bool registerRenderFunc(RenderFunc funxc);
+    void registerRenderFunc(RenderFunc func);
     template <typename T,typename F>
-    bool registerRenderFunc(T* t, F* f)
+    void registerRenderFunc(T* t, F f)
     {
-        registerRenderFunc(f,t);
+        registerRenderFunc(std::bind(f, t));
     }
 
-    bool registerPreFuncRender(preRenderFunc func);
+    //void registerPreFuncRender(preRenderFunc func);
     
+    void registerDestroyFunc(DestroyFunc func);
+    template<typename T,typename F>
+    void registerDestroyFunc(T* t, F f)
+    {
+        registerDestroyFunc(std::bind(f,t));
+    }
 
     void init();
 
@@ -45,4 +52,5 @@ public:
 private:
     std::vector<InitFunc> m_initFuncVec;
     std::vector<RenderFunc> m_renderFuncVec;
+    std::vector<DestroyFunc> m_destroyFuncVec;
 };

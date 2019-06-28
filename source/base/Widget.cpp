@@ -2,10 +2,10 @@
 #include "Singleton.h"
 #include "SampleBox.h"
 #include "GLWrapper.h"
+#include "Cube.h"
 
 Widget::Widget(/* args */)
-    :m_sampleBox(nullptr),
-    m_window(nullptr)
+    :m_window(nullptr)
 {
     m_glWrapper = new GLWrapper;
 }
@@ -16,13 +16,18 @@ Widget::~Widget()
 
 void Widget::init()
 {
-    m_sampleBox = new SampleBox;
-    m_glWrapper->registerInitFunc(m_sampleBox,&SampleBox::init);
-	GLWrapper::errorCheck();
-    m_glWrapper->registerRenderFunc(m_sampleBox,&SampleBox::render);
-	GLWrapper::errorCheck();
+    SampleBox* sampleBox = new SampleBox;
+    m_glWrapper->registerInitFunc(sampleBox,&SampleBox::init);
+    m_glWrapper->registerRenderFunc(sampleBox,&SampleBox::render);
+    m_glWrapper->registerDestroyFunc(sampleBox,&SampleBox::destroy);
+
+    Cube* cube = new Cube;
+    m_glWrapper->registerRenderFunc(cube,&Cube::init);
+    m_glWrapper->registerRenderFunc(cube,&Cube::render);
+    m_glWrapper->registerDestroyFunc(cube,&Cube::destroy);
+
     m_glWrapper->init();
-	GLWrapper::errorCheck();
+
 }
 
 void Widget::setWindow(GLFWwindow* wd)
@@ -32,10 +37,8 @@ void Widget::setWindow(GLFWwindow* wd)
 
 void Widget::render()
 {
-    glClearColor(0.0f, 0.7f, 0.8f, 1.0f);
-	GLWrapper::errorCheck();
+    glClearColor(0.6f, 0.6f, 0.6f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	GLWrapper::errorCheck();
 
     m_glWrapper->render();
 

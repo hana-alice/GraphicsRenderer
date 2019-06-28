@@ -277,3 +277,4 @@ main
 *.filters
 *.vcproj
 */.vscode/ipch
+*.sln

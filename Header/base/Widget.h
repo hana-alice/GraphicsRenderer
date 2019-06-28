@@ -2,8 +2,6 @@
 #include "GLWrapper.h"
 #include "GLFW\glfw3.h"
 
-class SampleBox;
-
 class Widget
 {
 public:
@@ -18,6 +16,5 @@ public:
 private:
     GLWrapper*  m_glWrapper;
     GLFWwindow* m_window;
-    SampleBox*  m_sampleBox;
 };
 
