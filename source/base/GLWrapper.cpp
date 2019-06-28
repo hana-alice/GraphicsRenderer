@@ -4,12 +4,13 @@
 
 GLWrapper::GLWrapper()
 {
-    Singleton::get
+    Singleton::getInstance()->setGLWrapper(this);
 }
 
 GLWrapper::~GLWrapper()
 {
-
+    for(DestroyFunc f : m_destroyFuncVec)
+        f();
 }
 
 void GLWrapper::errorCheck()
@@ -21,26 +22,24 @@ void GLWrapper::errorCheck()
     }
 }
 
-bool GLWrapper::registerInitFunc(InitFunc f)
+void GLWrapper::registerInitFunc(InitFunc f)
 {
-    if(std::find(m_initFuncVec.begin(),m_initFuncVec.end(),f) != m_initFuncVec.end())
-        m_initFuncVec.push_back(f);
-    else
-        return false;
-    return true;
+    m_initFuncVec.push_back(f);
 }
 
-bool GLWrapper::registerRenderFunc(RenderFunc f)
+void GLWrapper::registerRenderFunc(RenderFunc f)
 {
-    if(std::find(m_renderFuncVec.begin(),m_renderFuncVec.end(),f) != m_renderFuncVec.end())
-        m_renderFuncVec.push_back(f);
-    else
-        return false;
-    return true;
+    m_renderFuncVec.push_back(f);
+}
+
+void GLWrapper::registerDestroyFunc(DestroyFunc f)
+{
+    m_destroyFuncVec.push_back(f);
 }
 
 void GLWrapper::init()
 {
+
     for(InitFunc f : m_initFuncVec)
         f();
 }
