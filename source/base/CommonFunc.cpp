@@ -36,3 +36,16 @@ string CommonFunc::getCurrentDirectory()
     return string( result, (count > 0) ? count : 0 );
     #endif
 }
+
+string CommonFunc::getResourceDirectory()
+{
+    std::string str = getCurrentDirectory();
+    #ifdef _WIN64 || _WIN32
+    str = str.substr(0, str.find_last_of("/\\"));
+    str = str.substr(0, str.find_last_of("/\\"));
+    #elif __linux
+    str = str.substr(0, str.find_last_of("/"));
+    str = str.substr(0, str.find_last_of("/"));
+    #endif
+    return str;
+}

@@ -99,19 +99,22 @@ void Cube::init()
     glGenTextures(1,&texture1);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D,texture1);
-    glUniform1i(glGetUniformLocation(m_program,"texture1"),GL_TEXTURE0);
+	GLuint samplerPos1 = glGetUniformLocation(m_program, "texture1");
+	GLWrapper::errorCheck();
+    glUniform1i(samplerPos1,0);
+	GLWrapper::errorCheck();
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
-	std::string path = CommonFunc::getCurrentDirectory();
+	GLWrapper::errorCheck();
+	std::string path = CommonFunc::getResourceDirectory();
     int width, height, channels;
-    stbi_set_flip_vertically_on_load(true);
-    unsigned char* data = stbi_load("/resources/jojo0.jpg",&width,&height,&channels,0);
+    //stbi_set_flip_vertically_on_load(true);
+    unsigned char* data = stbi_load((path + "/resources/jojo0.jpg").c_str(),&width,&height,&channels,0);
     if(data)
     {
-        glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,data);
+        glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
@@ -123,15 +126,15 @@ void Cube::init()
     glGenTextures(1,&texture2);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D,texture2);
-    glUniform1i(glGetUniformLocation(m_program,"texture2"),GL_TEXTURE1);
+    glUniform1i(glGetUniformLocation(m_program,"texture2"),1);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    data = stbi_load("/resources/dio.jpg",&width,&height,&channels,0);
+    data = stbi_load((path + "/resources/dio.jpg").c_str(),&width,&height,&channels,0);
     if(data)
     {
-        glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,data);
+        glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
