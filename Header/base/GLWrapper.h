@@ -1,7 +1,7 @@
 #pragma once
 #include <functional>
 #include <vector>
-#include "glad/glad.h"
+#include "glad\glad.h"
 
 typedef std::function<void(void)> RenderFunc;
 typedef std::function<void(void)> InitFunc;

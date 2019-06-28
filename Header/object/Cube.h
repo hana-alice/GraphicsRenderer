@@ -1,5 +1,5 @@
 #pragma once
-#include "glfw/glfw3.h"
+#include "glad\glad.h"
 #include "Singleton.h"
 
 class Cube

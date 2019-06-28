@@ -1,15 +1,18 @@
 #include "Cube.h"
 #include "GLWrapper.h"
+#include <string>
+#include "CommonFunc.h"
+
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #endif
 #include "stbimg/stb_image.h"
 
 static const char* vertexShader = 
-"#version 330 core"
-"layout (location = 0) in vec3 aPos;"
-"layout (location = 1) in vec2 aTexCoord;"
-"out vec2 TexCoord;"
+"#version 330 core\n"
+"layout (location = 0) in vec3 aPos;\n"
+"layout (location = 1) in vec2 aTexCoord;\n"
+"out vec2 TexCoord;\n"
 "void main()"
 "{"
 "gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);"
@@ -17,11 +20,11 @@ static const char* vertexShader =
 "}";
 
 static const char* fragShader = 
-"#version 330 core"
-"out vec4 FragColor;"
-"in vec2 TexCoord;"
-"uniform sampler2D texture1;"
-"uniform sampler2D texture2;"
+"#version 330 core\n"
+"out vec4 FragColor;\n"
+"in vec2 TexCoord;\n"
+"uniform sampler2D texture1;\n"
+"uniform sampler2D texture2;\n"
 "void main()"
 "{"
 "FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);"
@@ -61,9 +64,9 @@ void Cube::init()
          0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
          0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
         -0.5f,  0.5f,  0.5f,  0.0f, 1.0f
-    }
+    };
 
-    unsigned short indices = 
+    unsigned short indices[] = 
     {
         0,1,3,  3,1,2,  
         2,1,5,  2,5,6,
@@ -71,7 +74,7 @@ void Cube::init()
         7,4,3,  3,4,0,
         3,2,7,  7,2,6,
         0,4,1,  1,4,5
-    }
+    };
 
     glGenVertexArrays(1,&m_vao);
     glBindVertexArray(m_vao);
@@ -82,16 +85,16 @@ void Cube::init()
     glGenBuffers(1,&m_ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,m_ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices),indices,GL_STATIC_DRAW);
-
+	GLWrapper::errorCheck();
     glUseProgram(m_program);
     GLint posLoc = glGetAttribLocation(m_program,"aPos");
     glVertexAttribPointer(posLoc,3,GL_FLOAT,GL_FALSE,5*sizeof(GL_FLOAT),(void*)0);
     glEnableVertexAttribArray(posLoc);
 
     GLint texLoc = glGetAttribLocation(m_program,"aTexCoord");
-    glVertexAttribPointer(texLoc,2,GL_FLOAT,GL_FALSE,5*sizeof(GL_FLOAT),(void*)3*sizeof(GL_FLOAT));
+    glVertexAttribPointer(texLoc,2,GL_FLOAT,GL_FALSE,5*sizeof(GL_FLOAT),(void*)(3*sizeof(GL_FLOAT)));
     glEnableVertexAttribArray(texLoc);
-
+	GLWrapper::errorCheck();
     unsigned int texture1, texture2;
     glGenTextures(1,&texture1);
     glActiveTexture(GL_TEXTURE0);
@@ -101,6 +104,8 @@ void Cube::init()
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+	std::string path = CommonFunc::getCurrentDirectory();
     int width, height, channels;
     stbi_set_flip_vertically_on_load(true);
     unsigned char* data = stbi_load("/resources/jojo0.jpg",&width,&height,&channels,0);
@@ -114,7 +119,7 @@ void Cube::init()
         //TODO: exception or debug info here
     }
     stbi_image_free(data);
-
+	GLWrapper::errorCheck();
     glGenTextures(1,&texture2);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D,texture2);
