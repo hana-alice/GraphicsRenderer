@@ -4,6 +4,7 @@
             "name": "win64",
             "includePath": [
                 "${workspaceFolder}/**",
+                "${workspaceFolder}/Header",
                 "${workspaceFolder}/dependencies/include/**",
                 "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Tools/MSVC/14.20.27508/include",
                 "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Tools/MSVC/14.20.27508/atlmfc/include",
@@ -31,9 +32,9 @@
                     "D:/Windows Kits/10/Include/10.0.17763.0/shared",
                     "D:/Windows Kits/10/Include/10.0.17763.0/winrt",
                     "D:/Windows Kits/10/Include/10.0.17763.0/cppwinrt"
-                    
                 ]
-            }
+            },
+            "configurationProvider": "vector-of-bool.cmake-tools"
         }
     ],
     "version": 4
