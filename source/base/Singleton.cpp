@@ -1,10 +1,13 @@
 #include "Singleton.h"
+#include "glm/gtc/matrix_transform.hpp"
 
 Singleton* Singleton::s_instance = NULL;
 Singleton::Singleton()
 :m_glWrapper(nullptr)
 {
-
+    m_viewMat = glm::mat4(1.0f);
+    m_viewMat = glm::translate(m_viewMat, glm::vec3(0.0f, 0.0f, -3.0f));
+	m_fov = 45.0f;
 }
 Singleton::~Singleton()
 {
