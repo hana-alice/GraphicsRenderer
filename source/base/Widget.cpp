@@ -18,7 +18,7 @@ void Widget::init()
 {
     SampleBox* sampleBox = new SampleBox;
     m_glWrapper->registerInitFunc(sampleBox,&SampleBox::init);
-    m_glWrapper->registerRenderFunc(sampleBox,&SampleBox::render);
+    //m_glWrapper->registerRenderFunc(sampleBox,&SampleBox::render);
     m_glWrapper->registerDestroyFunc(sampleBox,&SampleBox::destroy);
 
     Cube* cube = new Cube;

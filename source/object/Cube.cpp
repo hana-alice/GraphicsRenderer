@@ -2,6 +2,9 @@
 #include "GLWrapper.h"
 #include <string>
 #include "CommonFunc.h"
+#include "glm\glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
@@ -13,9 +16,12 @@ static const char* vertexShader =
 "layout (location = 0) in vec3 aPos;\n"
 "layout (location = 1) in vec2 aTexCoord;\n"
 "out vec2 TexCoord;\n"
-"void main()"
+"uniform mat4 modelMat;\n"
+"uniform mat4 viewMat;\n"
+"uniform mat4 projectionMat;\n"
+"void main()\n"
 "{"
-"gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);"
+"gl_Position = projectionMat * viewMat * modelMat *vec4(aPos,1.0);"
 "TexCoord = vec2(aTexCoord.x, 1.0 - aTexCoord.y);"
 "}";
 
@@ -29,6 +35,19 @@ static const char* fragShader =
 "{"
 "FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.5);"
 "}";
+
+glm::vec3 cubePositions[] = {
+  glm::vec3( 0.0f,  0.0f,  0.0f), 
+  glm::vec3( 2.0f,  5.0f, -15.0f), 
+  glm::vec3(-1.5f, -2.2f, -2.5f),  
+  glm::vec3(-3.8f, -2.0f, -12.3f),  
+  glm::vec3( 2.4f, -0.4f, -3.5f),  
+  glm::vec3(-1.7f,  3.0f, -7.5f),  
+  glm::vec3( 1.3f, -2.0f, -2.5f),  
+  glm::vec3( 1.5f,  2.0f, -2.5f), 
+  glm::vec3( 1.5f,  0.2f, -1.5f), 
+  glm::vec3(-1.3f,  1.0f, -1.5f)  
+};
 
 Cube::Cube(/* args */)
     :m_glWrapper(nullptr)
@@ -60,10 +79,10 @@ void Cube::init()
          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
 
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f
+        -0.5f, -0.5f,  0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f
     };
 
     unsigned short indices[] = 
@@ -90,6 +109,20 @@ void Cube::init()
     GLint posLoc = glGetAttribLocation(m_program,"aPos");
     glVertexAttribPointer(posLoc,3,GL_FLOAT,GL_FALSE,5*sizeof(GL_FLOAT),(void*)0);
     glEnableVertexAttribArray(posLoc);
+
+    GLint modelLoc = 0, viewLoc = 0, projectionLoc = 0;
+    glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 view = glm::mat4(1.0f);
+	glm::mat4 proj = glm::mat4(1.0f);
+	view = Singleton::getInstance()->getViewMat();
+	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
+	modelLoc = glGetUniformLocation(m_program, "modelMat");
+	viewLoc = glGetUniformLocation(m_program, "viewMat");
+	projectionLoc = glGetUniformLocation(m_program, "projectionMat");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
+	GLWrapper::errorCheck();
 
     GLint texLoc = glGetAttribLocation(m_program,"aTexCoord");
     glVertexAttribPointer(texLoc,2,GL_FLOAT,GL_FALSE,5*sizeof(GL_FLOAT),(void*)(3*sizeof(GL_FLOAT)));
@@ -154,10 +187,19 @@ void Cube::render()
 	glEnable(GL_DEPTH_TEST);
 
     glBindVertexArray(m_vao);
-    GLWrapper::errorCheck();
-    glDrawElements(GL_TRIANGLES,36,GL_UNSIGNED_SHORT,NULL);
-    GLWrapper::errorCheck();
-
+    
+    for (size_t i = 0; i < sizeof(cubePositions)/sizeof(cubePositions[0]); i++)
+    {
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, cubePositions[i]);
+        float angle = 20.0f * i;
+        GLint modelLoc = glGetUniformLocation(m_program, "modelMat");
+		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        glDrawElements(GL_TRIANGLES,36,GL_UNSIGNED_SHORT,NULL);
+        GLWrapper::errorCheck();
+    }
+    
     glBindVertexArray(0);
     glUseProgram(0);
 }
