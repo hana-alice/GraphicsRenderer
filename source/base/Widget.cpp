@@ -22,7 +22,7 @@ void Widget::init()
     m_glWrapper->registerDestroyFunc(sampleBox,&SampleBox::destroy);
 
     Cube* cube = new Cube;
-    m_glWrapper->registerRenderFunc(cube,&Cube::init);
+    m_glWrapper->registerInitFunc(cube,&Cube::init);
     m_glWrapper->registerRenderFunc(cube,&Cube::render);
     m_glWrapper->registerDestroyFunc(cube,&Cube::destroy);
 

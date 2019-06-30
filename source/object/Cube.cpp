@@ -27,7 +27,7 @@ static const char* fragShader =
 "uniform sampler2D texture2;\n"
 "void main()"
 "{"
-"FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);"
+"FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.5);"
 "}";
 
 Cube::Cube(/* args */)
