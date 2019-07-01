@@ -129,7 +129,7 @@ void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
 void processInput(GLFWwindow *wd)
 {
     //no need to check if window is valid cuz this func exec after glfwWindowShouldClose(window)
-    float camSpeed = 0.005;
+    float camSpeed = 2.5 * deltaTime;
     if(glfwGetKey(window,GLFW_KEY_W) == GLFW_PRESS)
         camPos += camSpeed * camFront;
     if(glfwGetKey(window,GLFW_KEY_S) == GLFW_PRESS)
