@@ -17,6 +17,7 @@ Singleton::Singleton()
     m_camRight = glm::normalize(glm::cross(up,m_camDirection));
     m_camUp = glm::cross(glm::normalize(m_camDirection),m_camRight);
 
+    m_camFront = glm::vec3(0.0,0.0,-1.0);
 	m_viewMat = glm::lookAt(glm::vec3(0.0, 0.0, 3.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 }
 Singleton::~Singleton()
@@ -41,10 +42,9 @@ void Singleton::setViewMat(const glm::mat4 & mat)
 
 glm::mat4 Singleton::getViewMat()
 {
-    float radius = 10.0;
-    float camZ = cos(glfwGetTime()) * radius;
-    float camX = sin(glfwGetTime()) * radius;
-    m_viewMat = glm::lookAt(glm::vec3(camX,0.0,camZ),m_targetPos,glm::vec3(0.0,1.0,0.0));
+    //to assure every time campos changes, direction towards front but not a solid point
+    //"front" here means we eyes see towards inside the screen, that is minus Z.
+    m_viewMat = glm::lookAt(m_camPosition,m_camPosition + m_camFront,glm::vec3(0.0,1.0,0.0));
     return m_viewMat;
 }
 
@@ -56,4 +56,34 @@ void Singleton::setFOV(float fov)
 float Singleton::getFOV()
 {
     return m_fov;
+}
+
+void Singleton::setCameraPosition(const glm::vec3& camPos)
+{
+    m_camPosition = camPos;
+}
+
+glm::vec3 Singleton::getCameraPosition()
+{
+    return m_camPosition;
+}
+
+void Singleton::setCameraFront(const glm::vec3& camFront)
+{
+    m_camFront = camFront;
+}
+
+glm::vec3 Singleton::getCameraFront()
+{
+    return m_camFront;
+}
+
+void Singleton::setCameraUp(const glm::vec3& camUp)
+{
+    m_camUp = camUp;
+}
+
+glm::vec3 Singleton::getCameraUp()
+{
+    return m_camUp;
 }

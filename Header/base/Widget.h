@@ -1,6 +1,5 @@
 #pragma once
 #include "GLWrapper.h"
-#include "GLFW\glfw3.h"
 
 class Widget
 {
@@ -10,11 +9,18 @@ public:
 
     void init();
 
-    void render();
+    void show();
 
-    void setWindow(GLFWwindow* wd);//TODO: temporarily add here, should be integrated onto this class later
+protected:
+	void initContext();
+
+	void initObject();
+
+    void render();
 private:
     GLWrapper*  m_glWrapper;
-    GLFWwindow* m_window;
+    int         m_width;
+    int         m_height;
+    bool        m_initialised;
 };
 
