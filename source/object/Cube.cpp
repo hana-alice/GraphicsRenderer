@@ -37,16 +37,16 @@ static const char* fragShader =
 "}";
 
 glm::vec3 cubePositions[] = {
-  glm::vec3( 0.0f,  0.0f,  0.0f), 
-  glm::vec3( 2.0f,  5.0f, -15.0f), 
-  glm::vec3(-1.5f, -2.2f, -2.5f),  
-  glm::vec3(-3.8f, -2.0f, -12.3f),  
-  glm::vec3( 2.4f, -0.4f, -3.5f),  
-  glm::vec3(-1.7f,  3.0f, -7.5f),  
-  glm::vec3( 1.3f, -2.0f, -2.5f),  
-  glm::vec3( 1.5f,  2.0f, -2.5f), 
-  glm::vec3( 1.5f,  0.2f, -1.5f), 
-  glm::vec3(-1.3f,  1.0f, -1.5f)  
+    glm::vec3( 0.0f,  0.0f,  0.0f), 
+    glm::vec3( 2.0f,  5.0f, -15.0f), 
+    glm::vec3(-1.5f, -2.2f, -2.5f),  
+    glm::vec3(-3.8f, -2.0f, -12.3f),  
+    glm::vec3( 2.4f, -0.4f, -3.5f),  
+    glm::vec3(-1.7f,  3.0f, -7.5f),  
+    glm::vec3( 1.3f, -2.0f, -2.5f),  
+    glm::vec3( 1.5f,  2.0f, -2.5f), 
+    glm::vec3( 1.5f,  0.2f, -1.5f), 
+    glm::vec3(-1.3f,  1.0f, -1.5f)  
 };
 
 Cube::Cube(/* args */)
@@ -144,7 +144,7 @@ void Cube::init()
 	std::string path = CommonFunc::getResourceDirectory();
     int width, height, channels;
     //stbi_set_flip_vertically_on_load(true);
-    unsigned char* data = stbi_load((path + "/resources/jojo0.jpg").c_str(),&width,&height,&channels,0);
+    unsigned char* data = stbi_load((path + "/resources/images/jojo0.jpg").c_str(),&width,&height,&channels,0);
     if(data)
     {
         glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,data);
@@ -164,7 +164,7 @@ void Cube::init()
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    data = stbi_load((path + "/resources/dio.jpg").c_str(),&width,&height,&channels,0);
+    data = stbi_load((path + "/resources/images/dio.jpg").c_str(),&width,&height,&channels,0);
     if(data)
     {
         glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,data);

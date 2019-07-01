@@ -3,6 +3,9 @@
 
 class GLWrapper;
 
+static const int SCR_WIDTH = 1280;
+static const int SCR_HEIGHT = 720;
+
 class Singleton
 {
 public:

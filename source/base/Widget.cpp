@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "LightCube.h"
 
 GLFWwindow* window = nullptr;
 static float deltaTime = 0.0f;
@@ -125,6 +126,16 @@ void Widget::initObject()
 	m_glWrapper->registerInitFunc(cube, &Cube::init);
 	m_glWrapper->registerRenderFunc(cube, &Cube::render);
 	m_glWrapper->registerDestroyFunc(cube, &Cube::destroy);
+
+	LightCube* light = new LightCube(LightCube::LIGHT);
+	m_glWrapper->registerInitFunc(light, &LightCube::init);
+	m_glWrapper->registerRenderFunc(light, &LightCube::render);
+	m_glWrapper->registerDestroyFunc(light, &LightCube::destroy);
+
+	LightCube* object = new LightCube(LightCube::OBJECT);
+	m_glWrapper->registerInitFunc(object, &LightCube::init);
+	m_glWrapper->registerRenderFunc(object, &LightCube::render);
+	m_glWrapper->registerDestroyFunc(object, &LightCube::destroy);
 
 	m_glWrapper->init();
 }
