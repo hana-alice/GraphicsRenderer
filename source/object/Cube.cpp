@@ -191,6 +191,11 @@ void Cube::render()
 	glm::mat4 view = glm::mat4(1.0f);
 	view = Singleton::getInstance()->getViewMat();
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+
+    glm::mat4 proj = glm::mat4(1.0f);
+	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
+	GLint projectionLoc = glGetUniformLocation(m_program, "projectionMat");
+	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
     
     for (size_t i = 0; i < sizeof(cubePositions)/sizeof(cubePositions[0]); i++)
     {

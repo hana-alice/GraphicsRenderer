@@ -23,6 +23,7 @@ static glm::vec3 camUp = Singleton::getInstance()->getCameraUp();
 void frameBufferSizeCallback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* wd);
 void mouseCallback(GLFWwindow* wd, double xpos, double ypos);
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
 Widget::Widget(/* args */)
     :m_width(1280),m_height(720),
@@ -101,7 +102,7 @@ void Widget::initContext()
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
     glfwSetCursorPosCallback(window,mouseCallback);
-	//glfwSetScrollCallback(window, scroll_callback);
+	glfwSetScrollCallback(window, scrollCallback);
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -192,4 +193,22 @@ void mouseCallback(GLFWwindow* wd, double xpos, double ypos)
     front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     camFront = glm::normalize(front);
 	Singleton::getInstance()->setCameraFront(camFront);
+}
+
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    float fov = Singleton::getInstance()->getFOV();
+    if (fov >= 1.0 && fov <= 45.0 )
+    {
+        fov -= yoffset;
+    }
+    else if(fov < 1.0)
+    {
+        fov = 1.0;
+    }
+    else if(fov >= 45.0)
+    {
+        fov = 45.0;
+    }
+    Singleton::getInstance()->setFOV(fov);
 }
