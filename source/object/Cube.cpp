@@ -187,6 +187,10 @@ void Cube::render()
 	glEnable(GL_DEPTH_TEST);
 
     glBindVertexArray(m_vao);
+	GLint viewLoc = glGetUniformLocation(m_program, "viewMat");
+	glm::mat4 view = glm::mat4(1.0f);
+	view = Singleton::getInstance()->getViewMat();
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
     
     for (size_t i = 0; i < sizeof(cubePositions)/sizeof(cubePositions[0]); i++)
     {
