@@ -112,15 +112,14 @@ void Cube::init()
 
     GLint modelLoc = 0, viewLoc = 0, projectionLoc = 0;
     glm::mat4 model = glm::mat4(1.0f);
-	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 proj = glm::mat4(1.0f);
-	view = Singleton::getInstance()->getViewMat();
+	const glm::mat4* view = Singleton::getInstance()->getViewMat();
 	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
 	modelLoc = glGetUniformLocation(m_program, "modelMat");
 	viewLoc = glGetUniformLocation(m_program, "viewMat");
 	projectionLoc = glGetUniformLocation(m_program, "projectionMat");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
 	GLWrapper::errorCheck();
 
@@ -188,9 +187,8 @@ void Cube::render()
 
     glBindVertexArray(m_vao);
 	GLint viewLoc = glGetUniformLocation(m_program, "viewMat");
-	glm::mat4 view = glm::mat4(1.0f);
-	view = Singleton::getInstance()->getViewMat();
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+	const glm::mat4* view = Singleton::getInstance()->getViewMat();
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
 
     glm::mat4 proj = glm::mat4(1.0f);
 	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);

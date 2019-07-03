@@ -23,7 +23,7 @@ public:
 
     void setViewMat(const glm::mat4 & mat);
 
-	glm::mat4 getViewMat();
+	const glm::mat4* getViewMat();
 
     void setFOV(float fov);
 

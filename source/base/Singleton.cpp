@@ -40,12 +40,12 @@ void Singleton::setViewMat(const glm::mat4 & mat)
     m_viewMat = mat;
 }
 
-glm::mat4 Singleton::getViewMat()
+const glm::mat4* Singleton::getViewMat()
 {
     //to assure every time campos changes, direction towards front but not a solid point
     //"front" here means we eyes see towards inside the screen, that is minus Z.
     m_viewMat = glm::lookAt(m_camPosition,m_camPosition + m_camFront,glm::vec3(0.0,1.0,0.0));
-    return m_viewMat;
+    return &m_viewMat;
 }
 
 void Singleton::setFOV(float fov)

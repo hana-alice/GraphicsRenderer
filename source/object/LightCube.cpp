@@ -104,22 +104,18 @@ void LightCube::init()
     glVertexAttribPointer(posLoc,3,GL_FLOAT,GL_FALSE,6*sizeof(GL_FLOAT),(void*)0);
     glEnableVertexAttribArray(posLoc);
 
-    GLint normLoc = glGetAttribLocation(m_program,"aNormal");
-    glVertexAttribPointer(normLoc,3,GL_FLOAT,GL_FALSE,6*sizeof(GL_FLOAT),(void*)(3*sizeof(GL_FLOAT)));
-    glEnableVertexAttribArray(normLoc);
-
     GLint modelLoc = 0, viewLoc = 0, projectionLoc = 0, lightColorLoc = 0, objColorLoc = 0, ltPosLoc = 0;
     glm::mat4 model = glm::mat4(1.0f);
-	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 proj = glm::mat4(1.0f);
-    
-	view = Singleton::getInstance()->getViewMat();
+	GLWrapper::errorCheck();
+	const glm::mat4 *view = Singleton::getInstance()->getViewMat();
 	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
 	modelLoc = glGetUniformLocation(m_program, "model");
 	viewLoc = glGetUniformLocation(m_program, "view");
 	projectionLoc = glGetUniformLocation(m_program, "projection");
     lightColorLoc = glGetUniformLocation(m_program, "lightColor");
     objColorLoc   = glGetUniformLocation(m_program, "objectColor");
+	GLWrapper::errorCheck();
     glm::vec3 lightPos = glm::vec3(1.2,1.0,2.0);
     if(m_type == LIGHT)
     {
@@ -128,11 +124,16 @@ void LightCube::init()
     }
     else 
     {
+		GLWrapper::errorCheck();
+		GLint normLoc = glGetAttribLocation(m_program, "aNormal");
+		glVertexAttribPointer(normLoc, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(normLoc);
         ltPosLoc = glGetUniformLocation(m_program,"lightPos");
         glUniform3fv(ltPosLoc,1,glm::value_ptr(lightPos));
     }
+	GLWrapper::errorCheck();
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
     glUniform3f(lightColorLoc,1.0f, 1.0f, 1.0f);
     glUniform3f(objColorLoc,1.0f, 0.5f, 0.31f);
@@ -150,9 +151,8 @@ void LightCube::render()
 
     glBindVertexArray(m_vao);
 	GLint viewLoc = glGetUniformLocation(m_program, "view");
-	glm::mat4 view = glm::mat4(1.0f);
-	view = Singleton::getInstance()->getViewMat();
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+	const glm::mat4* view = Singleton::getInstance()->getViewMat();
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
 
     glm::mat4 proj = glm::mat4(1.0f);
 	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);

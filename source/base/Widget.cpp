@@ -117,15 +117,15 @@ void Widget::initContext()
 void Widget::initObject()
 {
 	//init object
-	SampleBox* sampleBox = new SampleBox;
-	m_glWrapper->registerInitFunc(sampleBox, &SampleBox::init);
-	//m_glWrapper->registerRenderFunc(sampleBox,&SampleBox::render);
-	m_glWrapper->registerDestroyFunc(sampleBox, &SampleBox::destroy);
-
-	Cube* cube = new Cube;
-	m_glWrapper->registerInitFunc(cube, &Cube::init);
-	//m_glWrapper->registerRenderFunc(cube, &Cube::render);
-	m_glWrapper->registerDestroyFunc(cube, &Cube::destroy);
+	//SampleBox* sampleBox = new SampleBox;
+	//m_glWrapper->registerInitFunc(sampleBox, &SampleBox::init);
+	////m_glWrapper->registerRenderFunc(sampleBox,&SampleBox::render);
+	//m_glWrapper->registerDestroyFunc(sampleBox, &SampleBox::destroy);
+	//
+	//Cube* cube = new Cube;
+	//m_glWrapper->registerInitFunc(cube, &Cube::init);
+	////m_glWrapper->registerRenderFunc(cube, &Cube::render);
+	//m_glWrapper->registerDestroyFunc(cube, &Cube::destroy);
 
 	LightCube* light = new LightCube(LightCube::LIGHT);
 	m_glWrapper->registerInitFunc(light, &LightCube::init);
