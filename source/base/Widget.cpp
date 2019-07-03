@@ -14,7 +14,7 @@ static float lastFrame = 0.0f;
 static float lastX =  640;
 static float lastY = 360;
 static float yaw = -90.0;
-static float pitch = 0.0;
+static float pitch = 0;
 static bool firstIn = true;
 
 static glm::vec3 camPos = Singleton::getInstance()->getCameraPosition();
@@ -124,7 +124,7 @@ void Widget::initObject()
 
 	Cube* cube = new Cube;
 	m_glWrapper->registerInitFunc(cube, &Cube::init);
-	m_glWrapper->registerRenderFunc(cube, &Cube::render);
+	//m_glWrapper->registerRenderFunc(cube, &Cube::render);
 	m_glWrapper->registerDestroyFunc(cube, &Cube::destroy);
 
 	LightCube* light = new LightCube(LightCube::LIGHT);
