@@ -154,9 +154,9 @@ void processInput(GLFWwindow *wd)
     if(glfwGetKey(window,GLFW_KEY_S) == GLFW_PRESS)
         camPos -= camSpeed * camFront;
     if(glfwGetKey(window,GLFW_KEY_A) == GLFW_PRESS)
-        camPos -= glm::normalize(glm::cross(camFront,camUp)) * camSpeed;//front first, up later, cross get a vector towards right, hence subtract
+        camPos -= glm::normalize(glm::cross(camFront,glm::vec3(0.0,1.0,0.0))) * camSpeed;//front first, up later, cross get a vector towards right, hence subtract
     if(glfwGetKey(window,GLFW_KEY_D) == GLFW_PRESS)
-        camPos += glm::normalize(glm::cross(camFront,camUp)) * camSpeed;
+        camPos += glm::normalize(glm::cross(camFront,glm::vec3(0.0,1.0,0.0))) * camSpeed;
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);

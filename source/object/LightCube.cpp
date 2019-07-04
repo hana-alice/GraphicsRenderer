@@ -154,6 +154,9 @@ void LightCube::render()
 	const glm::mat4* view = Singleton::getInstance()->getViewMat();
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
 
+    GLint viewPosLoc = glGetUniformLocation(m_program,"viewPos");
+    glUniform3fv(viewPosLoc,1,glm::value_ptr(Singleton::getInstance()->getCameraPosition()));
+
     glm::mat4 proj = glm::mat4(1.0f);
 	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
 	GLint projectionLoc = glGetUniformLocation(m_program, "projection");
