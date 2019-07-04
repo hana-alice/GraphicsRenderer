@@ -3,6 +3,9 @@
 
 class GLWrapper;
 
+static const int SCR_WIDTH = 1280;
+static const int SCR_HEIGHT = 720;
+
 class Singleton
 {
 public:
@@ -20,7 +23,7 @@ public:
 
     void setViewMat(const glm::mat4 & mat);
 
-	glm::mat4 getViewMat();
+	const glm::mat4* getViewMat();
 
     void setFOV(float fov);
 

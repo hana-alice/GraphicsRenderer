@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "LightCube.h"
 
 GLFWwindow* window = nullptr;
 static float deltaTime = 0.0f;
@@ -13,7 +14,7 @@ static float lastFrame = 0.0f;
 static float lastX =  640;
 static float lastY = 360;
 static float yaw = -90.0;
-static float pitch = 0.0;
+static float pitch = 0;
 static bool firstIn = true;
 
 static glm::vec3 camPos = Singleton::getInstance()->getCameraPosition();
@@ -116,15 +117,25 @@ void Widget::initContext()
 void Widget::initObject()
 {
 	//init object
-	SampleBox* sampleBox = new SampleBox;
-	m_glWrapper->registerInitFunc(sampleBox, &SampleBox::init);
-	//m_glWrapper->registerRenderFunc(sampleBox,&SampleBox::render);
-	m_glWrapper->registerDestroyFunc(sampleBox, &SampleBox::destroy);
+	//SampleBox* sampleBox = new SampleBox;
+	//m_glWrapper->registerInitFunc(sampleBox, &SampleBox::init);
+	////m_glWrapper->registerRenderFunc(sampleBox,&SampleBox::render);
+	//m_glWrapper->registerDestroyFunc(sampleBox, &SampleBox::destroy);
+	//
+	//Cube* cube = new Cube;
+	//m_glWrapper->registerInitFunc(cube, &Cube::init);
+	////m_glWrapper->registerRenderFunc(cube, &Cube::render);
+	//m_glWrapper->registerDestroyFunc(cube, &Cube::destroy);
 
-	Cube* cube = new Cube;
-	m_glWrapper->registerInitFunc(cube, &Cube::init);
-	m_glWrapper->registerRenderFunc(cube, &Cube::render);
-	m_glWrapper->registerDestroyFunc(cube, &Cube::destroy);
+	LightCube* light = new LightCube(LightCube::LIGHT);
+	m_glWrapper->registerInitFunc(light, &LightCube::init);
+	m_glWrapper->registerRenderFunc(light, &LightCube::render);
+	m_glWrapper->registerDestroyFunc(light, &LightCube::destroy);
+
+	LightCube* object = new LightCube(LightCube::OBJECT);
+	m_glWrapper->registerInitFunc(object, &LightCube::init);
+	m_glWrapper->registerRenderFunc(object, &LightCube::render);
+	m_glWrapper->registerDestroyFunc(object, &LightCube::destroy);
 
 	m_glWrapper->init();
 }
@@ -143,9 +154,9 @@ void processInput(GLFWwindow *wd)
     if(glfwGetKey(window,GLFW_KEY_S) == GLFW_PRESS)
         camPos -= camSpeed * camFront;
     if(glfwGetKey(window,GLFW_KEY_A) == GLFW_PRESS)
-        camPos -= glm::normalize(glm::cross(camFront,camUp)) * camSpeed;//front first, up later, cross get a vector towards right, hence subtract
+        camPos -= glm::normalize(glm::cross(camFront,glm::vec3(0.0,1.0,0.0))) * camSpeed;//front first, up later, cross get a vector towards right, hence subtract
     if(glfwGetKey(window,GLFW_KEY_D) == GLFW_PRESS)
-        camPos += glm::normalize(glm::cross(camFront,camUp)) * camSpeed;
+        camPos += glm::normalize(glm::cross(camFront,glm::vec3(0.0,1.0,0.0))) * camSpeed;
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);

@@ -37,16 +37,16 @@ static const char* fragShader =
 "}";
 
 glm::vec3 cubePositions[] = {
-  glm::vec3( 0.0f,  0.0f,  0.0f), 
-  glm::vec3( 2.0f,  5.0f, -15.0f), 
-  glm::vec3(-1.5f, -2.2f, -2.5f),  
-  glm::vec3(-3.8f, -2.0f, -12.3f),  
-  glm::vec3( 2.4f, -0.4f, -3.5f),  
-  glm::vec3(-1.7f,  3.0f, -7.5f),  
-  glm::vec3( 1.3f, -2.0f, -2.5f),  
-  glm::vec3( 1.5f,  2.0f, -2.5f), 
-  glm::vec3( 1.5f,  0.2f, -1.5f), 
-  glm::vec3(-1.3f,  1.0f, -1.5f)  
+    glm::vec3( 0.0f,  0.0f,  0.0f), 
+    glm::vec3( 2.0f,  5.0f, -15.0f), 
+    glm::vec3(-1.5f, -2.2f, -2.5f),  
+    glm::vec3(-3.8f, -2.0f, -12.3f),  
+    glm::vec3( 2.4f, -0.4f, -3.5f),  
+    glm::vec3(-1.7f,  3.0f, -7.5f),  
+    glm::vec3( 1.3f, -2.0f, -2.5f),  
+    glm::vec3( 1.5f,  2.0f, -2.5f), 
+    glm::vec3( 1.5f,  0.2f, -1.5f), 
+    glm::vec3(-1.3f,  1.0f, -1.5f)  
 };
 
 Cube::Cube(/* args */)
@@ -112,15 +112,14 @@ void Cube::init()
 
     GLint modelLoc = 0, viewLoc = 0, projectionLoc = 0;
     glm::mat4 model = glm::mat4(1.0f);
-	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 proj = glm::mat4(1.0f);
-	view = Singleton::getInstance()->getViewMat();
+	const glm::mat4* view = Singleton::getInstance()->getViewMat();
 	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
 	modelLoc = glGetUniformLocation(m_program, "modelMat");
 	viewLoc = glGetUniformLocation(m_program, "viewMat");
 	projectionLoc = glGetUniformLocation(m_program, "projectionMat");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
 	GLWrapper::errorCheck();
 
@@ -144,7 +143,7 @@ void Cube::init()
 	std::string path = CommonFunc::getResourceDirectory();
     int width, height, channels;
     //stbi_set_flip_vertically_on_load(true);
-    unsigned char* data = stbi_load((path + "/resources/jojo0.jpg").c_str(),&width,&height,&channels,0);
+    unsigned char* data = stbi_load((path + "/resources/images/jojo0.jpg").c_str(),&width,&height,&channels,0);
     if(data)
     {
         glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,data);
@@ -164,7 +163,7 @@ void Cube::init()
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    data = stbi_load((path + "/resources/dio.jpg").c_str(),&width,&height,&channels,0);
+    data = stbi_load((path + "/resources/images/dio.jpg").c_str(),&width,&height,&channels,0);
     if(data)
     {
         glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,data);
@@ -188,9 +187,8 @@ void Cube::render()
 
     glBindVertexArray(m_vao);
 	GLint viewLoc = glGetUniformLocation(m_program, "viewMat");
-	glm::mat4 view = glm::mat4(1.0f);
-	view = Singleton::getInstance()->getViewMat();
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+	const glm::mat4* view = Singleton::getInstance()->getViewMat();
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
 
     glm::mat4 proj = glm::mat4(1.0f);
 	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
