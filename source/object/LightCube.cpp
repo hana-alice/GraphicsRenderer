@@ -8,54 +8,58 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include <sstream>
+#ifndef STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#endif
+#include "stbimg/stb_image.h"
 
 #pragma region vertices
-float vertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+static float vertices[] = {
+         -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
 
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
 
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
     };
 #pragma endregion
 
-LightCube::LightCube(CUBE_TYPE tp):m_type(tp)
+LightCube::LightCube()
 {
 }
 
@@ -67,17 +71,10 @@ void LightCube::init()
 {
     std::string srcPath = CommonFunc::getResourceDirectory();
     std::ifstream vsSource,fsSource;
-
-    if(m_type == OBJECT)
-    {
-        vsSource.open(srcPath + "/resources/shader/object.vs");
-	    fsSource.open(srcPath + "/resources/shader/object.fs");
-    }
-    else if(m_type == LIGHT)
-    {
-        vsSource.open(srcPath + "/resources/shader/light.vs");
-	    fsSource.open(srcPath + "/resources/shader/light.fs");
-    }
+    
+    vsSource.open(srcPath + "/resources/shader/object.vs");
+    fsSource.open(srcPath + "/resources/shader/object.fs");
+    
 	std::string bufStr;
 	std::string vs, fs;
 	while (getline(vsSource, bufStr))
@@ -101,10 +98,10 @@ void LightCube::init()
     
     glUseProgram(m_program);
     GLint posLoc = glGetAttribLocation(m_program,"aPos");
-    glVertexAttribPointer(posLoc,3,GL_FLOAT,GL_FALSE,6*sizeof(GL_FLOAT),(void*)0);
+    glVertexAttribPointer(posLoc,3,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(void*)0);
     glEnableVertexAttribArray(posLoc);
 
-    GLint modelLoc = 0, viewLoc = 0, projectionLoc = 0, lightColorLoc = 0, objColorLoc = 0, ltPosLoc = 0;
+    GLint modelLoc = 0, viewLoc = 0, projectionLoc = 0, ltPosLoc = 0;
     glm::mat4 model = glm::mat4(1.0f);
 	glm::mat4 proj = glm::mat4(1.0f);
 	GLWrapper::errorCheck();
@@ -113,30 +110,52 @@ void LightCube::init()
 	modelLoc = glGetUniformLocation(m_program, "model");
 	viewLoc = glGetUniformLocation(m_program, "view");
 	projectionLoc = glGetUniformLocation(m_program, "projection");
-    lightColorLoc = glGetUniformLocation(m_program, "lightColor");
-    objColorLoc   = glGetUniformLocation(m_program, "objectColor");
 	GLWrapper::errorCheck();
     glm::vec3 lightPos = glm::vec3(1.2,1.0,2.0);
-    if(m_type == LIGHT)
-    {
-        model = glm::translate(model,lightPos);
-        model = glm::scale(model,glm::vec3(0.2));
-    }
-    else 
-    {
-		GLWrapper::errorCheck();
-		GLint normLoc = glGetAttribLocation(m_program, "aNormal");
-		glVertexAttribPointer(normLoc, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
-		glEnableVertexAttribArray(normLoc);
-        ltPosLoc = glGetUniformLocation(m_program,"lightPos");
-        glUniform3fv(ltPosLoc,1,glm::value_ptr(lightPos));
-    }
-	GLWrapper::errorCheck();
+    
+    GLWrapper::errorCheck();
+    GLint normLoc = glGetAttribLocation(m_program, "aNormal");
+    glVertexAttribPointer(normLoc, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
+    glEnableVertexAttribArray(normLoc);
+
+    GLint texLoc = glGetAttribLocation(m_program, "aTex");
+    glVertexAttribPointer(texLoc, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (void*)(6 * sizeof(GL_FLOAT)));
+    glEnableVertexAttribArray(texLoc);
+    
+	
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
-    glUniform3f(lightColorLoc,1.0f, 1.0f, 1.0f);
-    glUniform3f(objColorLoc,1.0f, 0.5f, 0.31f);
+
+    GLWrapper::errorCheck();
+
+    glGenTextures(1,&m_tex);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_tex);
+	GLWrapper::errorCheck();
+	std::string path = CommonFunc::getResourceDirectory();
+    int width, height, channels;
+    //stbi_set_flip_vertically_on_load(true);
+    unsigned char* data = stbi_load((path + "/resources/images/container2.png").c_str(),&width,&height,&channels,0);
+    if(data)
+    {
+        glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,width,height,0, GL_RGBA,GL_UNSIGNED_BYTE,data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
+    else
+    {
+        //TODO: exception or debug info here
+    }
+	GLuint samplerPos = glGetUniformLocation(m_program, "material.diffuse");
+	glUniform1i(samplerPos, 0);
+    stbi_image_free(data);
+	GLWrapper::errorCheck();
+	glBindTexture(GL_TEXTURE_2D, 0);
+    GLWrapper::errorCheck();
     glUseProgram(0);
     glBindVertexArray(0);
 	GLWrapper::errorCheck();
@@ -153,28 +172,24 @@ void LightCube::render()
 	GLint viewLoc = glGetUniformLocation(m_program, "view");
 	const glm::mat4* view = Singleton::getInstance()->getViewMat();
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
-
+	GLWrapper::errorCheck();
     GLint viewPosLoc = glGetUniformLocation(m_program,"viewPos");
     glUniform3fv(viewPosLoc,1,glm::value_ptr(Singleton::getInstance()->getCameraPosition()));
+
+    GLint lightPosLoc = glGetUniformLocation(m_program,"light.lightPos");
+    glUniform3fv(lightPosLoc,1,glm::value_ptr(Singleton::getInstance()->getLightPos()));
 
     glm::mat4 proj = glm::mat4(1.0f);
 	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
 	GLint projectionLoc = glGetUniformLocation(m_program, "projection");
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
-
-    glm::vec3 mAmbient = glm::vec3(1.0f,0.5f,0.31f);
-	GLint mAmbientLoc = glGetUniformLocation(m_program, "material.ambient");
-    glUniform3fv(mAmbientLoc,1,glm::value_ptr(mAmbient));
-
-    glm::vec3 mDiffuse = glm::vec3(1.0f,0.5f,0.31f);
-	GLint mDiffuseLoc = glGetUniformLocation(m_program, "material.diffuse");
-    glUniform3fv(mDiffuseLoc,1,glm::value_ptr(mDiffuse));
-
+	
+	GLWrapper::errorCheck();
     glm::vec3 mSpecular = glm::vec3(0.5f,0.5f,0.5f);
 	GLint mSpecularLoc = glGetUniformLocation(m_program, "material.specular");
     glUniform3fv(mSpecularLoc,1,glm::value_ptr(mSpecular));
-
-	float shininess = 32;
+	GLWrapper::errorCheck();
+	float shininess = 64;
 	GLint shininessLoc = glGetUniformLocation(m_program, "material.shininess");
 	glUniform1f(shininessLoc, shininess);
 
@@ -190,9 +205,13 @@ void LightCube::render()
 	GLint lSpecularLoc = glGetUniformLocation(m_program, "light.specular");
 	glUniform3fv(lSpecularLoc, 1, glm::value_ptr(lSpecular));
     GLWrapper::errorCheck();
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D,m_tex);
     glDrawArrays(GL_TRIANGLES,0,36);
       
     glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);
 }
 

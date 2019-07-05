@@ -5,13 +5,8 @@ class GLWrapper;
 class LightCube
 {
 public:
-	enum CUBE_TYPE
-	{
-		OBJECT,
-		LIGHT
-	};
 
-    LightCube(CUBE_TYPE tp);
+    LightCube();
     ~LightCube();
 
     void init();
@@ -27,5 +22,5 @@ private:
 	GLuint m_vao;
 	GLuint m_vbo;
 	GLuint m_ibo;
-    CUBE_TYPE   m_type;
+	GLuint m_tex;
 };
