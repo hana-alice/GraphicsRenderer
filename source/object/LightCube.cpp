@@ -162,6 +162,34 @@ void LightCube::render()
 	GLint projectionLoc = glGetUniformLocation(m_program, "projection");
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
 
+    glm::vec3 mAmbient = glm::vec3(1.0f,0.5f,0.31f);
+	GLint mAmbientLoc = glGetUniformLocation(m_program, "material.ambient");
+    glUniform3fv(mAmbientLoc,1,glm::value_ptr(mAmbient));
+
+    glm::vec3 mDiffuse = glm::vec3(1.0f,0.5f,0.31f);
+	GLint mDiffuseLoc = glGetUniformLocation(m_program, "material.diffuse");
+    glUniform3fv(mDiffuseLoc,1,glm::value_ptr(mDiffuse));
+
+    glm::vec3 mSpecular = glm::vec3(0.5f,0.5f,0.5f);
+	GLint mSpecularLoc = glGetUniformLocation(m_program, "material.specular");
+    glUniform3fv(mSpecularLoc,1,glm::value_ptr(mSpecular));
+
+	float shininess = 32;
+	GLint shininessLoc = glGetUniformLocation(m_program, "material.shininess");
+	glUniform1f(shininessLoc, shininess);
+
+	glm::vec3 lAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
+	GLint lAmbientLoc = glGetUniformLocation(m_program, "light.ambient");
+	glUniform3fv(lAmbientLoc, 1, glm::value_ptr(lAmbient));
+
+	glm::vec3 lDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+	GLint lDiffuseLoc = glGetUniformLocation(m_program, "light.diffuse");
+	glUniform3fv(lDiffuseLoc, 1, glm::value_ptr(lDiffuse));
+
+	glm::vec3 lSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
+	GLint lSpecularLoc = glGetUniformLocation(m_program, "light.specular");
+	glUniform3fv(lSpecularLoc, 1, glm::value_ptr(lSpecular));
+    GLWrapper::errorCheck();
     glDrawArrays(GL_TRIANGLES,0,36);
       
     glBindVertexArray(0);
