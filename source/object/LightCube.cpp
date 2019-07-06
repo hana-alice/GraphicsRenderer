@@ -129,9 +129,9 @@ void LightCube::init()
 
     GLWrapper::errorCheck();
 
-    glGenTextures(1,&m_tex);
+    glGenTextures(1,&m_diffuseMap);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_tex);
+    glBindTexture(GL_TEXTURE_2D, m_diffuseMap);
 	GLWrapper::errorCheck();
 	std::string path = CommonFunc::getResourceDirectory();
     int width, height, channels;
@@ -153,9 +153,32 @@ void LightCube::init()
 	GLuint samplerPos = glGetUniformLocation(m_program, "material.diffuse");
 	glUniform1i(samplerPos, 0);
     stbi_image_free(data);
+
+    glGenTextures(1,&m_specularMap);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_specularMap);
+    data = stbi_load((path + "/resources/images/container2.png").c_str(),&width,&height,&channels,0);
+    if(data)
+    {
+        glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,width,height,0, GL_RGBA,GL_UNSIGNED_BYTE,data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
+    else
+    {
+        //TODO: exception or debug info here
+    }
+	samplerPos = glGetUniformLocation(m_program, "material.specular");
+	glUniform1i(samplerPos, 1);
+    stbi_image_free(data);
+
 	GLWrapper::errorCheck();
+
+
 	glBindTexture(GL_TEXTURE_2D, 0);
-    GLWrapper::errorCheck();
     glUseProgram(0);
     glBindVertexArray(0);
 	GLWrapper::errorCheck();
@@ -185,10 +208,6 @@ void LightCube::render()
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
 	
 	GLWrapper::errorCheck();
-    glm::vec3 mSpecular = glm::vec3(0.5f,0.5f,0.5f);
-	GLint mSpecularLoc = glGetUniformLocation(m_program, "material.specular");
-    glUniform3fv(mSpecularLoc,1,glm::value_ptr(mSpecular));
-	GLWrapper::errorCheck();
 	float shininess = 64;
 	GLint shininessLoc = glGetUniformLocation(m_program, "material.shininess");
 	glUniform1f(shininessLoc, shininess);
@@ -207,7 +226,10 @@ void LightCube::render()
     GLWrapper::errorCheck();
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D,m_tex);
+    glBindTexture(GL_TEXTURE_2D,m_diffuseMap);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D,m_specularMap);
     glDrawArrays(GL_TRIANGLES,0,36);
       
     glBindVertexArray(0);
