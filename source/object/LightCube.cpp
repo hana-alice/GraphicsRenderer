@@ -157,7 +157,7 @@ void LightCube::init()
     glGenTextures(1,&m_specularMap);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, m_specularMap);
-    data = stbi_load((path + "/resources/images/container2.png").c_str(),&width,&height,&channels,0);
+    data = stbi_load((path + "/resources/images/container2_specular.png").c_str(),&width,&height,&channels,0);
     if(data)
     {
         glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,width,height,0, GL_RGBA,GL_UNSIGNED_BYTE,data);
