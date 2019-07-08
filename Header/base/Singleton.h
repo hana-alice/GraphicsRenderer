@@ -45,6 +45,10 @@ public:
 
     void setLightPos(const glm::vec3& lightPos);
 
+    glm::vec3 getLightDir();
+
+    void setLightDir(const glm::vec3& lightDir);
+
     GLWrapper* getGLWrapper();
 
 private:
@@ -59,4 +63,5 @@ private:
     glm::vec3           m_camUp;
     glm::vec3           m_camFront;
     glm::vec3           m_lightPos;
+    glm::vec3           m_lightDir;
 };

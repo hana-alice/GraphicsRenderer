@@ -57,6 +57,19 @@ static float vertices[] = {
         -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
     };
+
+glm::vec3 cubePositions[] = {
+    glm::vec3( 0.0f,  0.0f,  0.0f),
+    glm::vec3( 2.0f,  5.0f, -15.0f),
+    glm::vec3(-1.5f, -2.2f, -2.5f),
+    glm::vec3(-3.8f, -2.0f, -12.3f),
+    glm::vec3( 2.4f, -0.4f, -3.5f),
+    glm::vec3(-1.7f,  3.0f, -7.5f),
+    glm::vec3( 1.3f, -2.0f, -2.5f),
+    glm::vec3( 1.5f,  2.0f, -2.5f),
+    glm::vec3( 1.5f,  0.2f, -1.5f),
+    glm::vec3(-1.3f,  1.0f, -1.5f)
+};
 #pragma endregion
 
 LightCube::LightCube()
@@ -199,8 +212,8 @@ void LightCube::render()
     GLint viewPosLoc = glGetUniformLocation(m_program,"viewPos");
     glUniform3fv(viewPosLoc,1,glm::value_ptr(Singleton::getInstance()->getCameraPosition()));
 
-    GLint lightPosLoc = glGetUniformLocation(m_program,"light.lightPos");
-    glUniform3fv(lightPosLoc,1,glm::value_ptr(Singleton::getInstance()->getLightPos()));
+    GLint lightPosLoc = glGetUniformLocation(m_program,"light.lightDir");
+    glUniform3fv(lightPosLoc,1,glm::value_ptr(Singleton::getInstance()->getLightDir()));
 
     glm::mat4 proj = glm::mat4(1.0f);
 	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
@@ -230,6 +243,19 @@ void LightCube::render()
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D,m_specularMap);
+
+    for(unsigned int i = 0; i < 10; i++)
+    {
+        glm::mat4 model;
+        model = glm::translate(model, cubePositions[i]);
+        float angle = 20.0f * i;
+        model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+
+        GLint modelLoc = glGetUniformLocation(m_program, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
     glDrawArrays(GL_TRIANGLES,0,36);
       
     glBindVertexArray(0);
