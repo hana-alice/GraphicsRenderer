@@ -5,7 +5,8 @@
 Singleton* Singleton::s_instance = NULL;
 Singleton::Singleton()
 :m_glWrapper(nullptr),
-m_lightPos(1.0,1.0,1.0)
+m_lightPos(1.0,1.0,1.0),
+m_lightDir(-0.2f, -1.0f, -0.3f)
 {
     m_viewMat = glm::mat4(1.0f);
     m_viewMat = glm::translate(m_viewMat, glm::vec3(0.0f, 0.0f, -3.0f));
@@ -97,4 +98,14 @@ glm::vec3 Singleton::getLightPos()
 void Singleton::setLightPos(const glm::vec3& lightPos)
 {
     m_lightPos = lightPos;
+}
+
+glm::vec3 Singleton::getLightDir()
+{
+    return m_lightDir;
+}
+
+void Singleton::setLightDir(const glm::vec3& lightDir)
+{
+    m_lightDir = lightDir;
 }
