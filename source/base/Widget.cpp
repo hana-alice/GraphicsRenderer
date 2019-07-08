@@ -7,7 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "LightCube.h"
-
+#include "light.h"
 GLFWwindow* window = nullptr;
 static float deltaTime = 0.0f;
 static float lastFrame = 0.0f;
@@ -127,12 +127,12 @@ void Widget::initObject()
 	////m_glWrapper->registerRenderFunc(cube, &Cube::render);
 	//m_glWrapper->registerDestroyFunc(cube, &Cube::destroy);
 
-	LightCube* light = new LightCube(LightCube::LIGHT);
-	m_glWrapper->registerInitFunc(light, &LightCube::init);
-	m_glWrapper->registerRenderFunc(light, &LightCube::render);
-	m_glWrapper->registerDestroyFunc(light, &LightCube::destroy);
+	Light* light = new Light();
+	m_glWrapper->registerInitFunc(light, &Light::init);
+	m_glWrapper->registerRenderFunc(light, &Light::render);
+	m_glWrapper->registerDestroyFunc(light, &Light::destroy);
 
-	LightCube* object = new LightCube(LightCube::OBJECT);
+	LightCube* object = new LightCube();
 	m_glWrapper->registerInitFunc(object, &LightCube::init);
 	m_glWrapper->registerRenderFunc(object, &LightCube::render);
 	m_glWrapper->registerDestroyFunc(object, &LightCube::destroy);

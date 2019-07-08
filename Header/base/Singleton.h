@@ -41,6 +41,10 @@ public:
 
     glm::vec3 getCameraUp();
 
+    glm::vec3 getLightPos();
+
+    void setLightPos(const glm::vec3& lightPos);
+
     GLWrapper* getGLWrapper();
 
 private:
@@ -54,5 +58,5 @@ private:
     glm::vec3           m_camRight;
     glm::vec3           m_camUp;
     glm::vec3           m_camFront;
-    
+    glm::vec3           m_lightPos;
 };
