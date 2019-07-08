@@ -251,6 +251,8 @@ void LightCube::render()
 	glUniform3fv(spotlightDirLoc, 1, glm::value_ptr(Singleton::getInstance()->getCameraFront()));
     GLint cutoffLoc = glGetUniformLocation(m_program, "light.cutoff");
 	glUniform1f(cutoffLoc, glm::cos(glm::radians(12.5f)));
+    GLint outerCutoffLoc = glGetUniformLocation(m_program, "light.outerCutoff");
+	glUniform1f(outerCutoffLoc, glm::cos(glm::radians(17.5f)));
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D,m_diffuseMap);
