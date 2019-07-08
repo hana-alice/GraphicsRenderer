@@ -212,8 +212,8 @@ void LightCube::render()
     GLint viewPosLoc = glGetUniformLocation(m_program,"viewPos");
     glUniform3fv(viewPosLoc,1,glm::value_ptr(Singleton::getInstance()->getCameraPosition()));
 
-    GLint lightPosLoc = glGetUniformLocation(m_program,"light.lightDir");
-    glUniform3fv(lightPosLoc,1,glm::value_ptr(Singleton::getInstance()->getLightDir()));
+    GLint lightPosLoc = glGetUniformLocation(m_program,"light.lightVec");
+    glUniform3fv(lightPosLoc,1,glm::value_ptr(Singleton::getInstance()->getCameraPosition()));
 
     glm::mat4 proj = glm::mat4(1.0f);
 	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
@@ -237,6 +237,20 @@ void LightCube::render()
 	GLint lSpecularLoc = glGetUniformLocation(m_program, "light.specular");
 	glUniform3fv(lSpecularLoc, 1, glm::value_ptr(lSpecular));
     GLWrapper::errorCheck();
+
+	GLint constantLoc = glGetUniformLocation(m_program, "light.constant");
+	glUniform1f(constantLoc, 1.0);
+    GLint linearLoc = glGetUniformLocation(m_program, "light.linear");
+	glUniform1f(linearLoc, 0.09);
+    GLint quadraticLoc = glGetUniformLocation(m_program, "light.quadratic");
+	glUniform1f(quadraticLoc, 0.032);
+
+    GLint spotlightPosLoc = glGetUniformLocation(m_program, "light.position");
+	glUniform3fv(spotlightPosLoc, 1,glm::value_ptr(Singleton::getInstance()->getLightPos()));
+    GLint spotlightDirLoc = glGetUniformLocation(m_program, "light.direction");
+	glUniform3fv(spotlightDirLoc, 1, glm::value_ptr(Singleton::getInstance()->getCameraFront()));
+    GLint cutoffLoc = glGetUniformLocation(m_program, "light.cutoff");
+	glUniform1f(cutoffLoc, glm::cos(glm::radians(12.5f)));
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D,m_diffuseMap);
