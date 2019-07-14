@@ -127,6 +127,7 @@ void Cube::init()
     glVertexAttribPointer(texLoc,2,GL_FLOAT,GL_FALSE,5*sizeof(GL_FLOAT),(void*)(3*sizeof(GL_FLOAT)));
     glEnableVertexAttribArray(texLoc);
 	GLWrapper::errorCheck();
+    
     unsigned int texture1, texture2;
     glGenTextures(1,&texture1);
     glActiveTexture(GL_TEXTURE0);
@@ -195,17 +196,13 @@ void Cube::render()
 	GLint projectionLoc = glGetUniformLocation(m_program, "projectionMat");
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
     
-    for (size_t i = 0; i < sizeof(cubePositions)/sizeof(cubePositions[0]); i++)
-    {
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, cubePositions[i]);
-        float angle = 20.0f * i;
-        GLint modelLoc = glGetUniformLocation(m_program, "modelMat");
-		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-        glDrawElements(GL_TRIANGLES,36,GL_UNSIGNED_SHORT,NULL);
-        GLWrapper::errorCheck();
-    }
+    glm::mat4 model = glm::mat4(1.0f);
+    GLint modelLoc = glGetUniformLocation(m_program, "modelMat");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+    glDrawElements(GL_TRIANGLES,36,GL_UNSIGNED_SHORT,NULL);
+    GLWrapper::errorCheck();
+    
     
     glBindVertexArray(0);
     glUseProgram(0);
