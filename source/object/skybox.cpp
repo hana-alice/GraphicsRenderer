@@ -18,7 +18,8 @@ static const char* vertexShader =
 "uniform mat4 projectionMat;\n"
 "void main()\n"
 "{"
-"gl_Position = projectionMat * viewMat * vec4(aPos,1.0);"
+"vec4 pos = projectionMat * viewMat * vec4(aPos,1.0);"
+"gl_Position = pos.xyww;"
 "TexCoord = aPos;"
 "}";
 
@@ -143,6 +144,7 @@ void SkyBox::init()
     glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_R,GL_CLAMP_TO_EDGE);
+    Singleton::getInstance()->setSkyboxTexture(m_tex);
 	GLWrapper::errorCheck();
     glUseProgram(m_program);
     GLuint texSamplerLoc = glGetUniformLocation(m_program,"skyBox");

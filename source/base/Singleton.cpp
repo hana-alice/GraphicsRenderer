@@ -109,3 +109,13 @@ void Singleton::setLightDir(const glm::vec3& lightDir)
 {
     m_lightDir = lightDir;
 }
+
+GLuint Singleton::getSkyboxTexture()
+{
+    return m_skyboxTexture;
+}
+
+void Singleton::setSkyboxTexture(GLuint tex)
+{
+    m_skyboxTexture = tex;
+}
