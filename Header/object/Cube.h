@@ -21,4 +21,5 @@ private:
 	GLuint m_vao;
 	GLuint m_vbo;
 	GLuint m_ibo;
+	GLuint m_tex;
 };

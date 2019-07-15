@@ -14,26 +14,33 @@
 static const char* vertexShader = 
 "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
-"layout (location = 1) in vec2 aTexCoord;\n"
-"out vec2 TexCoord;\n"
+"in vec3 aNorm;\n"
+"out vec3 Normal;\n"
+"out vec3 Position;\n"
 "uniform mat4 modelMat;\n"
 "uniform mat4 viewMat;\n"
 "uniform mat4 projectionMat;\n"
 "void main()\n"
 "{"
-"gl_Position = projectionMat * viewMat * modelMat *vec4(aPos,1.0);"
-"TexCoord = vec2(aTexCoord.x, 1.0 - aTexCoord.y);"
+"Normal = mat3(transpose(inverse(modelMat))) * aNorm;\n"
+"Position = vec3(modelMat *vec4(aPos,1.0));\n"
+"gl_Position = projectionMat * viewMat * vec4(Position,1.0);\n"
 "}";
 
 static const char* fragShader = 
 "#version 330 core\n"
 "out vec4 FragColor;\n"
-"in vec2 TexCoord;\n"
-"uniform sampler2D texture1;\n"
-"uniform sampler2D texture2;\n"
+"in vec3 Normal;\n"
+"in vec3 Position;\n"
+//"in vec2 TexCoord;\n"
+"uniform vec3 camPos;\n"
+"uniform samplerCube texture1;\n"
+//"uniform sampler2D texture2;\n"
 "void main()"
 "{"
-"FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.5);"
+"vec3 I = normalize(Position - camPos);"
+"vec3 R = reflect(I,normalize(Normal));"
+"FragColor = texture(texture1, R);"
 "}";
 
 glm::vec3 cubePositions[] = {
@@ -74,15 +81,47 @@ void Cube::init()
 
     float vertices[] = 
     {
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
 
-        -0.5f, -0.5f,  0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
 
     unsigned short indices[] = 
@@ -100,14 +139,14 @@ void Cube::init()
     glGenBuffers(1,&m_vbo);
     glBindBuffer(GL_ARRAY_BUFFER,m_vbo);
     glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
-    
+    /*
     glGenBuffers(1,&m_ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,m_ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices),indices,GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices),indices,GL_STATIC_DRAW);*/
 	GLWrapper::errorCheck();
     glUseProgram(m_program);
     GLint posLoc = glGetAttribLocation(m_program,"aPos");
-    glVertexAttribPointer(posLoc,3,GL_FLOAT,GL_FALSE,5*sizeof(GL_FLOAT),(void*)0);
+    glVertexAttribPointer(posLoc,3,GL_FLOAT,GL_FALSE,6*sizeof(GL_FLOAT),(void*)0);
     glEnableVertexAttribArray(posLoc);
 
     GLint modelLoc = 0, viewLoc = 0, projectionLoc = 0;
@@ -123,23 +162,28 @@ void Cube::init()
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
 	GLWrapper::errorCheck();
 
-    GLint texLoc = glGetAttribLocation(m_program,"aTexCoord");
-    glVertexAttribPointer(texLoc,2,GL_FLOAT,GL_FALSE,5*sizeof(GL_FLOAT),(void*)(3*sizeof(GL_FLOAT)));
+    GLint texLoc = glGetAttribLocation(m_program,"aNorm");
+    glVertexAttribPointer(texLoc,3,GL_FLOAT,GL_FALSE,6*sizeof(GL_FLOAT),(void*)(3*sizeof(GL_FLOAT)));
     glEnableVertexAttribArray(texLoc);
 	GLWrapper::errorCheck();
-    
-    unsigned int texture1, texture2;
-    glGenTextures(1,&texture1);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D,texture1);
+
+    glUseProgram(m_program);
+    m_tex = Singleton::getInstance()->getSkyboxTexture();
 	GLuint samplerPos1 = glGetUniformLocation(m_program, "texture1");
 	GLWrapper::errorCheck();
-    glUniform1i(samplerPos1,0);
+	glUniform1i(samplerPos1, 0);
+	glActiveTexture(GL_TEXTURE0);
 	GLWrapper::errorCheck();
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	/*
+    //unsigned int texture1, texture2;
+    glGenTextures(1,&m_tex);
+    
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_tex);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_S,GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_T,GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	GLWrapper::errorCheck();
 	std::string path = CommonFunc::getResourceDirectory();
     int width, height, channels;
@@ -174,7 +218,7 @@ void Cube::init()
     {
         //TODO: exception or debug info here
     }
-    stbi_image_free(data);
+    stbi_image_free(data);*/
     glBindVertexArray(0);
     glUseProgram(0);
 }
@@ -195,12 +239,18 @@ void Cube::render()
 	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
 	GLint projectionLoc = glGetUniformLocation(m_program, "projectionMat");
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
-    
+
     glm::mat4 model = glm::mat4(1.0f);
     GLint modelLoc = glGetUniformLocation(m_program, "modelMat");
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-    glDrawElements(GL_TRIANGLES,36,GL_UNSIGNED_SHORT,NULL);
+    glm::vec3 camPos = Singleton::getInstance()->getCameraPosition();
+    GLint camPosLoc = glGetUniformLocation(m_program, "camPos");
+    glUniform3fv(camPosLoc, 1, glm::value_ptr(camPos));
+
+    glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, Singleton::getInstance()->getSkyboxTexture());
+    glDrawArrays(GL_TRIANGLES,0,36);
     GLWrapper::errorCheck();
     
     

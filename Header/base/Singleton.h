@@ -49,6 +49,10 @@ public:
 
     void setLightDir(const glm::vec3& lightDir);
 
+    void setSkyboxTexture(unsigned int texture);
+
+    unsigned int getSkyboxTexture();
+
     GLWrapper* getGLWrapper();
 
 private:
@@ -64,4 +68,5 @@ private:
     glm::vec3           m_camFront;
     glm::vec3           m_lightPos;
     glm::vec3           m_lightDir;
+    unsigned int        m_skyboxTexture;
 };
