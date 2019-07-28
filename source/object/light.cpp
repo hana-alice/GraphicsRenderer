@@ -140,7 +140,9 @@ void Light::render()
 
     GLWrapper::errorCheck();
     glDrawArrays(GL_TRIANGLES,0,36);
-      
+    
+	glDisable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
     glBindVertexArray(0);
     glUseProgram(0);
 }

@@ -203,6 +203,7 @@ void LightCube::render()
 	glUseProgram(m_program);
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
     glBindVertexArray(m_vao);
 	GLint viewLoc = glGetUniformLocation(m_program, "view");
@@ -273,10 +274,12 @@ void LightCube::render()
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
     glDrawArrays(GL_TRIANGLES,0,36);
-      
+    
     glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-    glUseProgram(0);
+	glDisable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	glUseProgram(0);
 }
 
 void LightCube::destroy()

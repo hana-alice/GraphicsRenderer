@@ -119,3 +119,13 @@ void Singleton::setSkyboxTexture(GLuint tex)
 {
     m_skyboxTexture = tex;
 }
+
+void Singleton::setUboId(unsigned int id)
+{
+    m_uboId = id;
+}
+
+unsigned int Singleton::getUboId()
+{
+    return m_uboId;
+}

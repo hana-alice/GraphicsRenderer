@@ -55,6 +55,11 @@ public:
 
     GLWrapper* getGLWrapper();
 
+    //TODO: compatible with container later
+    void setUboId(unsigned int id);
+
+    unsigned int getUboId();
+
 private:
     static Singleton*   s_instance;
     GLWrapper*          m_glWrapper;
@@ -69,4 +74,5 @@ private:
     glm::vec3           m_lightPos;
     glm::vec3           m_lightDir;
     unsigned int        m_skyboxTexture;
+    unsigned int        m_uboId;
 };

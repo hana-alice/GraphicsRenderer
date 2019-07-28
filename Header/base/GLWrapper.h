@@ -43,14 +43,24 @@ public:
 
     void render();
 
+    void preRenderFunc();
+
+    void postRenderFunc();
+
     //TODO:
     GLuint createShader(int type, const char* shaderSrc);
     
     GLuint createProgram(int vertexShader, int fragmentShader);
     //destroyShader();
     //destroyProgram();
+protected:
+    virtual void initUbo();
+
 private:
+
     std::vector<InitFunc> m_initFuncVec;
     std::vector<RenderFunc> m_renderFuncVec;
     std::vector<DestroyFunc> m_destroyFuncVec;
+
+    GLuint  m_uboMatrices;//TODO: container to expandibility
 };

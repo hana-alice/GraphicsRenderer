@@ -4,34 +4,12 @@
 #include "GLWrapper.h"
 #include <vector>
 #include <string>
+#include <fstream>
 #include "glm\glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
 using namespace std;
-
-static const char* vertexShader = 
-"#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"out vec3 TexCoord;\n"
-"uniform mat4 viewMat;\n"
-"uniform mat4 projectionMat;\n"
-"void main()\n"
-"{"
-"vec4 pos = projectionMat * viewMat * vec4(aPos,1.0);"
-"gl_Position = pos.xyww;"
-"TexCoord = aPos;"
-"}";
-
-static const char* fragShader = 
-"#version 330 core\n"
-"out vec4 FragColor;\n"
-"in vec3 TexCoord;\n"
-"uniform samplerCube skyBox;\n"
-"void main()"
-"{"
-"FragColor = texture(skyBox, TexCoord);"
-"}";
 
 SkyBox::SkyBox()
 {
@@ -95,9 +73,27 @@ void SkyBox::init()
         -1.0f, -1.0f,  1.0f,
          1.0f, -1.0f,  1.0f
     };
+
+    std::string srcPath = CommonFunc::getResourceDirectory();
+    std::ifstream vsSource,fsSource;
+
+    vsSource.open(srcPath + "/resources/shader/skybox.vs");
+    fsSource.open(srcPath + "/resources/shader/skybox.fs");
+    
+	std::string bufStr;
+	std::string vs, fs;
+	while (getline(vsSource, bufStr))
+	{
+		vs += (bufStr + '\n');
+	}
+	while (getline(fsSource, bufStr))
+	{
+		fs += (bufStr + '\n');
+	}
+
 	m_glWrapper = Singleton::getInstance()->getGLWrapper();
-	m_vertexShader = m_glWrapper->createShader(GL_VERTEX_SHADER, vertexShader);
-	m_fragmentShader = m_glWrapper->createShader(GL_FRAGMENT_SHADER, fragShader);
+	m_vertexShader = m_glWrapper->createShader(GL_VERTEX_SHADER, vs.c_str());
+	m_fragmentShader = m_glWrapper->createShader(GL_FRAGMENT_SHADER, fs.c_str());
 	m_program = m_glWrapper->createProgram(m_vertexShader, m_fragmentShader);
 	GLWrapper::errorCheck();
     glGenVertexArrays(1,&m_vao);
