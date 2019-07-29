@@ -52,9 +52,10 @@ void GLWrapper::initUbo()
     glGenBuffers(1,&m_uboMatrices);
     glBindBuffer(GL_UNIFORM_BUFFER,m_uboMatrices);
     glBufferData(GL_UNIFORM_BUFFER,2*sizeof(glm::mat4),NULL,GL_STATIC_DRAW);
-    glBindBuffer(GL_UNIFORM_BUFFER,0);
-    glBindBufferRange(GL_UNIFORM_BUFFER,0,m_uboMatrices,0,2*sizeof(glm::mat4));
+	unsigned int ubi = 2;
+    glBindBufferRange(GL_UNIFORM_BUFFER, ubi,m_uboMatrices,0,2*sizeof(glm::mat4));
     Singleton::getInstance()->setUboId(m_uboMatrices);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void GLWrapper::render()
@@ -72,8 +73,8 @@ void GLWrapper::preRenderFunc()
     glm::mat4 projection = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0/720.0), 0.1f, 100.0f);
     const glm::mat4* view = Singleton::getInstance()->getViewMat();
     glBindBuffer(GL_UNIFORM_BUFFER, m_uboMatrices);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
-    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(*view));
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(*view));
+    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projection));
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 

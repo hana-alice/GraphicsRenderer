@@ -161,7 +161,7 @@ void Cube::init()
 	GLWrapper::errorCheck();
 
     unsigned int uniformBlockIndex = glGetUniformBlockIndex(m_program,"Matrices");
-    glUniformBlockBinding(m_program,uniformBlockIndex,Singleton::getInstance()->getUboId());
+    glUniformBlockBinding(m_program,uniformBlockIndex,2);
 	/*
     //unsigned int texture1, texture2;
     glGenTextures(1,&m_tex);
@@ -219,14 +219,14 @@ void Cube::render()
 	glEnable(GL_DEPTH_TEST);
 
     glBindVertexArray(m_vao);
-	GLint viewLoc = glGetUniformLocation(m_program, "viewMat");
-	const glm::mat4* view = Singleton::getInstance()->getViewMat();
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
+	//GLint viewLoc = glGetUniformLocation(m_program, "viewMat");
+	//const glm::mat4* view = Singleton::getInstance()->getViewMat();
+	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
 
-    glm::mat4 proj = glm::mat4(1.0f);
-	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
-	GLint projectionLoc = glGetUniformLocation(m_program, "projectionMat");
-	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
+   //glm::mat4 proj = glm::mat4(1.0f);
+	//proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
+	//GLint projectionLoc = glGetUniformLocation(m_program, "projectionMat");
+	//glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
 
     glm::mat4 model = glm::mat4(1.0f);
     GLint modelLoc = glGetUniformLocation(m_program, "modelMat");
