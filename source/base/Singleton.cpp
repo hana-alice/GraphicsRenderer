@@ -120,12 +120,12 @@ void Singleton::setSkyboxTexture(GLuint tex)
     m_skyboxTexture = tex;
 }
 
-void Singleton::setUboId(unsigned int id)
+void Singleton::setUboBlockId(unsigned int id)
 {
     m_uboId = id;
 }
 
-unsigned int Singleton::getUboId()
+unsigned int Singleton::getUboBlockId()
 {
     return m_uboId;
 }

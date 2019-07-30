@@ -161,7 +161,7 @@ void Cube::init()
 	GLWrapper::errorCheck();
 
     unsigned int uniformBlockIndex = glGetUniformBlockIndex(m_program,"Matrices");
-    glUniformBlockBinding(m_program,uniformBlockIndex,2);
+    glUniformBlockBinding(m_program,uniformBlockIndex,Singleton::getInstance()->getUboBlockId());
 	/*
     //unsigned int texture1, texture2;
     glGenTextures(1,&m_tex);

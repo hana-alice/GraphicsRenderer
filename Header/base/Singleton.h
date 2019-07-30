@@ -56,9 +56,9 @@ public:
     GLWrapper* getGLWrapper();
 
     //TODO: compatible with container later
-    void setUboId(unsigned int id);
+    void setUboBlockId(unsigned int id);
 
-    unsigned int getUboId();
+    unsigned int getUboBlockId();
 
 private:
     static Singleton*   s_instance;

@@ -128,20 +128,20 @@ void Widget::initObject()
 	////m_glWrapper->registerRenderFunc(sampleBox,&SampleBox::render);
 	//m_glWrapper->registerDestroyFunc(sampleBox, &SampleBox::destroy);
 	//
-	Cube* cube = new Cube;
-	m_glWrapper->registerInitFunc(cube, &Cube::init);
-	m_glWrapper->registerRenderFunc(cube, &Cube::render);
-	m_glWrapper->registerDestroyFunc(cube, &Cube::destroy);
+	//Cube* cube = new Cube;
+	//m_glWrapper->registerInitFunc(cube, &Cube::init);
+	//m_glWrapper->registerRenderFunc(cube, &Cube::render);
+	//m_glWrapper->registerDestroyFunc(cube, &Cube::destroy);
 
-	//Light* light = new Light();
-	//m_glWrapper->registerInitFunc(light, &Light::init);
-	//m_glWrapper->registerRenderFunc(light, &Light::render);
-	//m_glWrapper->registerDestroyFunc(light, &Light::destroy);
+	Light* light = new Light();
+	m_glWrapper->registerInitFunc(light, &Light::init);
+	m_glWrapper->registerRenderFunc(light, &Light::render);
+	m_glWrapper->registerDestroyFunc(light, &Light::destroy);
 
-	//LightCube* object = new LightCube();
-	//m_glWrapper->registerInitFunc(object, &LightCube::init);
-	//m_glWrapper->registerRenderFunc(object, &LightCube::render);
-	//m_glWrapper->registerDestroyFunc(object, &LightCube::destroy);
+	LightCube* object = new LightCube();
+	m_glWrapper->registerInitFunc(object, &LightCube::init);
+	m_glWrapper->registerRenderFunc(object, &LightCube::render);
+	m_glWrapper->registerDestroyFunc(object, &LightCube::destroy);
 
 	m_glWrapper->init();
 }

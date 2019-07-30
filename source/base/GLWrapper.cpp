@@ -53,8 +53,8 @@ void GLWrapper::initUbo()
     glBindBuffer(GL_UNIFORM_BUFFER,m_uboMatrices);
     glBufferData(GL_UNIFORM_BUFFER,2*sizeof(glm::mat4),NULL,GL_STATIC_DRAW);
 	unsigned int ubi = 2;
+    Singleton::getInstance()->setUboBlockId(ubi);
     glBindBufferRange(GL_UNIFORM_BUFFER, ubi,m_uboMatrices,0,2*sizeof(glm::mat4));
-    Singleton::getInstance()->setUboId(m_uboMatrices);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
