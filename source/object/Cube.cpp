@@ -1,6 +1,7 @@
 #include "Cube.h"
 #include "GLWrapper.h"
 #include <string>
+#include <fstream>
 #include "CommonFunc.h"
 #include "glm\glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -10,38 +11,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #endif
 #include "stbimg/stb_image.h"
-
-static const char* vertexShader = 
-"#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"in vec3 aNorm;\n"
-"out vec3 Normal;\n"
-"out vec3 Position;\n"
-"uniform mat4 modelMat;\n"
-"uniform mat4 viewMat;\n"
-"uniform mat4 projectionMat;\n"
-"void main()\n"
-"{"
-"Normal = mat3(transpose(inverse(modelMat))) * aNorm;\n"
-"Position = vec3(modelMat *vec4(aPos,1.0));\n"
-"gl_Position = projectionMat * viewMat * vec4(Position,1.0);\n"
-"}";
-
-static const char* fragShader = 
-"#version 330 core\n"
-"out vec4 FragColor;\n"
-"in vec3 Normal;\n"
-"in vec3 Position;\n"
-//"in vec2 TexCoord;\n"
-"uniform vec3 camPos;\n"
-"uniform samplerCube texture1;\n"
-//"uniform sampler2D texture2;\n"
-"void main()"
-"{"
-"vec3 I = normalize(Position - camPos);"
-"vec3 R = reflect(I,normalize(Normal));"
-"FragColor = texture(texture1, R);"
-"}";
 
 glm::vec3 cubePositions[] = {
     glm::vec3( 0.0f,  0.0f,  0.0f), 
@@ -74,9 +43,25 @@ Cube::~Cube()
 
 void Cube::init()
 {
+    std::string srcPath = CommonFunc::getResourceDirectory();
+    std::ifstream vsSource,fsSource;
+
+    vsSource.open(srcPath + "/resources/shader/cube.vs");
+    fsSource.open(srcPath + "/resources/shader/cube.fs");
+    
+	std::string bufStr;
+	std::string vs, fs;
+	while (getline(vsSource, bufStr))
+	{
+		vs += (bufStr + '\n');
+	}
+	while (getline(fsSource, bufStr))
+	{
+		fs += (bufStr + '\n');
+	}
     m_glWrapper = Singleton::getInstance()->getGLWrapper();
-    m_vertexShader = m_glWrapper->createShader(GL_VERTEX_SHADER,vertexShader);
-    m_fragmentShader = m_glWrapper->createShader(GL_FRAGMENT_SHADER,fragShader);
+    m_vertexShader = m_glWrapper->createShader(GL_VERTEX_SHADER,vs.c_str());
+    m_fragmentShader = m_glWrapper->createShader(GL_FRAGMENT_SHADER,fs.c_str());
     m_program = m_glWrapper->createProgram(m_vertexShader,m_fragmentShader);
 
     float vertices[] = 
@@ -174,6 +159,9 @@ void Cube::init()
 	glUniform1i(samplerPos1, 0);
 	glActiveTexture(GL_TEXTURE0);
 	GLWrapper::errorCheck();
+
+    unsigned int uniformBlockIndex = glGetUniformBlockIndex(m_program,"Matrices");
+    glUniformBlockBinding(m_program,uniformBlockIndex,Singleton::getInstance()->getUboBlockId());
 	/*
     //unsigned int texture1, texture2;
     glGenTextures(1,&m_tex);
@@ -231,14 +219,14 @@ void Cube::render()
 	glEnable(GL_DEPTH_TEST);
 
     glBindVertexArray(m_vao);
-	GLint viewLoc = glGetUniformLocation(m_program, "viewMat");
-	const glm::mat4* view = Singleton::getInstance()->getViewMat();
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
+	//GLint viewLoc = glGetUniformLocation(m_program, "viewMat");
+	//const glm::mat4* view = Singleton::getInstance()->getViewMat();
+	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
 
-    glm::mat4 proj = glm::mat4(1.0f);
-	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
-	GLint projectionLoc = glGetUniformLocation(m_program, "projectionMat");
-	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
+   //glm::mat4 proj = glm::mat4(1.0f);
+	//proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
+	//GLint projectionLoc = glGetUniformLocation(m_program, "projectionMat");
+	//glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
 
     glm::mat4 model = glm::mat4(1.0f);
     GLint modelLoc = glGetUniformLocation(m_program, "modelMat");

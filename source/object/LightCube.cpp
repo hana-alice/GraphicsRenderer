@@ -110,6 +110,11 @@ void LightCube::init()
     glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
     
     glUseProgram(m_program);
+
+    unsigned int uniformBlockIndex = glGetUniformBlockIndex(m_program,"Matrices");
+	unsigned int a = Singleton::getInstance()->getUboBlockId();
+    glUniformBlockBinding(m_program,uniformBlockIndex,Singleton::getInstance()->getUboBlockId());
+    GLWrapper::errorCheck();
     GLint posLoc = glGetAttribLocation(m_program,"aPos");
     glVertexAttribPointer(posLoc,3,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(void*)0);
     glEnableVertexAttribArray(posLoc);
@@ -203,11 +208,12 @@ void LightCube::render()
 	glUseProgram(m_program);
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
     glBindVertexArray(m_vao);
-	GLint viewLoc = glGetUniformLocation(m_program, "view");
-	const glm::mat4* view = Singleton::getInstance()->getViewMat();
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
+	//GLint viewLoc = glGetUniformLocation(m_program, "viewMat");
+	//const glm::mat4* view = Singleton::getInstance()->getViewMat();
+	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
 	GLWrapper::errorCheck();
     GLint viewPosLoc = glGetUniformLocation(m_program,"viewPos");
     glUniform3fv(viewPosLoc,1,glm::value_ptr(Singleton::getInstance()->getCameraPosition()));
@@ -215,10 +221,10 @@ void LightCube::render()
     GLint lightPosLoc = glGetUniformLocation(m_program,"light.lightVec");
     glUniform3fv(lightPosLoc,1,glm::value_ptr(Singleton::getInstance()->getCameraPosition()));
 
-    glm::mat4 proj = glm::mat4(1.0f);
-	proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
-	GLint projectionLoc = glGetUniformLocation(m_program, "projection");
-	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
+    //glm::mat4 proj = glm::mat4(1.0f);
+	//proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
+	//GLint projectionLoc = glGetUniformLocation(m_program, "projectionMat");
+	//glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
 	
 	GLWrapper::errorCheck();
 	float shininess = 64;
@@ -273,10 +279,12 @@ void LightCube::render()
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
     glDrawArrays(GL_TRIANGLES,0,36);
-      
+    
     glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-    glUseProgram(0);
+	glDisable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	glUseProgram(0);
 }
 
 void LightCube::destroy()
