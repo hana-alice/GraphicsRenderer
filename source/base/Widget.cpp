@@ -9,6 +9,7 @@
 #include "LightCube.h"
 #include "light.h"
 #include "skybox.h"
+#include "GeoObject.h"
 GLFWwindow* window = nullptr;
 static float deltaTime = 0.0f;
 static float lastFrame = 0.0f;
@@ -118,10 +119,10 @@ void Widget::initContext()
 void Widget::initObject()
 {
 	//init object
-	SkyBox* skyBox = new SkyBox;
-	m_glWrapper->registerInitFunc(skyBox, &SkyBox::init);
-	m_glWrapper->registerRenderFunc(skyBox, &SkyBox::render);
-	m_glWrapper->registerDestroyFunc(skyBox, &SkyBox::destroy);
+	//SkyBox* skyBox = new SkyBox;
+	//m_glWrapper->registerInitFunc(skyBox, &SkyBox::init);
+	//m_glWrapper->registerRenderFunc(skyBox, &SkyBox::render);
+	//m_glWrapper->registerDestroyFunc(skyBox, &SkyBox::destroy);
 
 	//SampleBox* sampleBox = new SampleBox;
 	//m_glWrapper->registerInitFunc(sampleBox, &SampleBox::init);
@@ -133,15 +134,21 @@ void Widget::initObject()
 	//m_glWrapper->registerRenderFunc(cube, &Cube::render);
 	//m_glWrapper->registerDestroyFunc(cube, &Cube::destroy);
 
-	Light* light = new Light();
-	m_glWrapper->registerInitFunc(light, &Light::init);
-	m_glWrapper->registerRenderFunc(light, &Light::render);
-	m_glWrapper->registerDestroyFunc(light, &Light::destroy);
+	//two object below uncomment for flash light effect
+	////Light* light = new Light();
+	////m_glWrapper->registerInitFunc(light, &Light::init);
+	////m_glWrapper->registerRenderFunc(light, &Light::render);
+	////m_glWrapper->registerDestroyFunc(light, &Light::destroy);
+	////
+	////LightCube* object = new LightCube();
+	////m_glWrapper->registerInitFunc(object, &LightCube::init);
+	////m_glWrapper->registerRenderFunc(object, &LightCube::render);
+	////m_glWrapper->registerDestroyFunc(object, &LightCube::destroy);
 
-	LightCube* object = new LightCube();
-	m_glWrapper->registerInitFunc(object, &LightCube::init);
-	m_glWrapper->registerRenderFunc(object, &LightCube::render);
-	m_glWrapper->registerDestroyFunc(object, &LightCube::destroy);
+	GeoObject* geoObject = new GeoObject();
+	m_glWrapper->registerInitFunc(geoObject, &GeoObject::init);
+	m_glWrapper->registerRenderFunc(geoObject, &GeoObject::render);
+	m_glWrapper->registerDestroyFunc(geoObject, &GeoObject::destroy);
 
 	m_glWrapper->init();
 }

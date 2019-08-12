@@ -101,14 +101,19 @@ GLuint GLWrapper::createShader(int type, const char* shaderSrc)
     return shader;
 }
 
-GLuint GLWrapper::createProgram(int vertexShader, int fragmentShader)
+GLuint GLWrapper::createProgram(int vertexShader, int fragmentShader,int geometryShader)
 {
     GLuint pgm = glCreateProgram();
     glAttachShader(pgm,vertexShader);
     glAttachShader(pgm,fragmentShader);
+    if (geometryShader != -1)
+        glAttachShader(pgm,geometryShader);
+    
     glLinkProgram(pgm);
     errorCheck();
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+    if (geometryShader != -1)
+        glDeleteShader(geometryShader);
     return pgm;
 }

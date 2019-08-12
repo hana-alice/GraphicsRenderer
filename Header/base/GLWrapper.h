@@ -50,7 +50,7 @@ public:
     //TODO:
     GLuint createShader(int type, const char* shaderSrc);
     
-    GLuint createProgram(int vertexShader, int fragmentShader);
+    GLuint createProgram(int vertexShader, int fragmentShader, int geometryShader = -1);
     //destroyShader();
     //destroyProgram();
 protected:
