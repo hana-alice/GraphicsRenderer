@@ -50,6 +50,12 @@ void GeoObject::init()
         0.5,-0.5,0.0,
         -0.5,-0.5,0.0
     };
+    float colors[] = {
+        1.0,0.0,0.0,1.0,
+        0.0,1.0,0.0,1.0,
+        0.0,0.0,1.0,1.0,
+        0.0,1.0,1.0,1.0
+    };
 
     glGenVertexArrays(1,&m_vao);
     glBindVertexArray(m_vao);
@@ -59,6 +65,15 @@ void GeoObject::init()
 	GLint loc = glGetAttribLocation(m_program, "aPos");
 	glEnableVertexAttribArray(loc);
 	glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    GLuint colorBuf = 0;
+    glGenBuffers(1,&colorBuf);
+    glBindBuffer(GL_ARRAY_BUFFER,colorBuf);
+    glBufferData(GL_ARRAY_BUFFER,sizeof(colors),colors,GL_STATIC_DRAW);
+	loc = glGetAttribLocation(m_program, "aColor");
+	glEnableVertexAttribArray(loc);
+	glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
     glBindVertexArray(0);
 	GLWrapper::errorCheck();
 }
