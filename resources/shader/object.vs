@@ -7,6 +7,9 @@ out vec3 Normal;
 out vec3 FragPos;
 out vec2 TexCoords;
 uniform mat4 model;
+
+uniform vec2 offsets[100];
+
 layout (std140) uniform Matrices
 {
     mat4 viewMat;
@@ -15,8 +18,10 @@ layout (std140) uniform Matrices
 
 void main()
 {
-    gl_Position = projectionMat * viewMat * model * vec4(aPos, 1.0);
-    FragPos = vec3(model*vec4(aPos,1.0));
+    vec2 offset = offsets[gl_InstanceID];
+    vec4 pos = vec4(aPos.x + offset.x, aPos.y + offset.y,aPos.z, 1.0);
+    gl_Position = projectionMat * viewMat * model * pos;
+    FragPos = vec3(model*pos);
     Normal = mat3(transpose(inverse(model))) * aNormal;
     TexCoords = aTex;
 }

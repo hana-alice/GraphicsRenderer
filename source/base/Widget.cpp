@@ -50,7 +50,7 @@ void Widget::init()
 
 void Widget::render()
 {
-    glClearColor(0.6f, 0.6f, 0.6f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     m_glWrapper->render();
@@ -135,20 +135,20 @@ void Widget::initObject()
 	//m_glWrapper->registerDestroyFunc(cube, &Cube::destroy);
 
 	//two object below uncomment for flash light effect
-	////Light* light = new Light();
-	////m_glWrapper->registerInitFunc(light, &Light::init);
-	////m_glWrapper->registerRenderFunc(light, &Light::render);
-	////m_glWrapper->registerDestroyFunc(light, &Light::destroy);
-	////
-	////LightCube* object = new LightCube();
-	////m_glWrapper->registerInitFunc(object, &LightCube::init);
-	////m_glWrapper->registerRenderFunc(object, &LightCube::render);
-	////m_glWrapper->registerDestroyFunc(object, &LightCube::destroy);
+	Light* light = new Light();
+	m_glWrapper->registerInitFunc(light, &Light::init);
+	m_glWrapper->registerRenderFunc(light, &Light::render);
+	m_glWrapper->registerDestroyFunc(light, &Light::destroy);
+	
+	LightCube* object = new LightCube();
+	m_glWrapper->registerInitFunc(object, &LightCube::init);
+	m_glWrapper->registerRenderFunc(object, &LightCube::render);
+	m_glWrapper->registerDestroyFunc(object, &LightCube::destroy);
 
-	GeoObject* geoObject = new GeoObject();
-	m_glWrapper->registerInitFunc(geoObject, &GeoObject::init);
-	m_glWrapper->registerRenderFunc(geoObject, &GeoObject::render);
-	m_glWrapper->registerDestroyFunc(geoObject, &GeoObject::destroy);
+	//GeoObject* geoObject = new GeoObject();
+	//m_glWrapper->registerInitFunc(geoObject, &GeoObject::init);
+	//m_glWrapper->registerRenderFunc(geoObject, &GeoObject::render);
+	//m_glWrapper->registerDestroyFunc(geoObject, &GeoObject::destroy);
 
 	m_glWrapper->init();
 }

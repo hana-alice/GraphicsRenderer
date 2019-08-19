@@ -147,6 +147,29 @@ void LightCube::init()
 
     GLWrapper::errorCheck();
 
+    GLint offsetLoc = 0;
+    glm::vec2 translations[100];
+    int index = 0;
+    float offset = 0.1f;
+    std::string indexStr;
+    std::stringstream ss;
+    for (int y = -5; y < 5; y++)
+    {
+        for (int x = -5; x < 5; x++)
+        {
+            translations[index].x = x + offset;
+            translations[index].y = y + offset;
+			ss.clear();
+            ss << index;
+            ss >> indexStr;
+            offsetLoc = glGetUniformLocation(m_program,("offsets[" + indexStr + "]").c_str());
+            glUniform2fv(offsetLoc,1,glm::value_ptr(translations[index]));
+            index++;
+        }
+    }
+    GLWrapper::errorCheck();
+
+
     glGenTextures(1,&m_diffuseMap);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_diffuseMap);
@@ -266,7 +289,7 @@ void LightCube::render()
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D,m_specularMap);
 
-    for(unsigned int i = 0; i < 10; i++)
+    /*for(unsigned int i = 0; i < 10; i++)
     {
         glm::mat4 model;
         model = glm::translate(model, cubePositions[i]);
@@ -277,8 +300,9 @@ void LightCube::render()
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
-    glDrawArrays(GL_TRIANGLES,0,36);
+    }*/
+    //glDrawArrays(GL_TRIANGLES,0,36);
+    glDrawArraysInstanced(GL_TRIANGLES,0,36,100);
     
     glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
