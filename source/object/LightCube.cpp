@@ -171,8 +171,8 @@ void LightCube::init()
 
 
     glGenTextures(1,&m_diffuseMap);
-    glBindTexture(GL_TEXTURE_2D, m_diffuseMap);
     glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_diffuseMap);
 	GLWrapper::errorCheck();
 	std::string path = CommonFunc::getResourceDirectory();
     int width, height, channels;
@@ -196,8 +196,8 @@ void LightCube::init()
     stbi_image_free(data);
 
     glGenTextures(1,&m_specularMap);
-    glBindTexture(GL_TEXTURE_2D, m_specularMap);
     glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_specularMap);
     data = stbi_load((path + "/resources/images/container2_specular.png").c_str(),&width,&height,&channels,0);
     if(data)
     {
@@ -217,6 +217,7 @@ void LightCube::init()
     stbi_image_free(data);
 
 	GLWrapper::errorCheck();
+
 
 	glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);
@@ -282,12 +283,12 @@ void LightCube::render()
     GLint outerCutoffLoc = glGetUniformLocation(m_program, "light.outerCutoff");
 	glUniform1f(outerCutoffLoc, glm::cos(glm::radians(17.5f)));
 
-    glBindTexture(GL_TEXTURE_2D,m_diffuseMap);
     glActiveTexture(GL_TEXTURE0);
-    
-    glBindTexture(GL_TEXTURE_2D,m_specularMap);
+    glBindTexture(GL_TEXTURE_2D,m_diffuseMap);
+
     glActiveTexture(GL_TEXTURE1);
-    
+    glBindTexture(GL_TEXTURE_2D,m_specularMap);
+
     /*for(unsigned int i = 0; i < 10; i++)
     {
         glm::mat4 model;

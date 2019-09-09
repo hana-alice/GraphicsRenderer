@@ -92,8 +92,8 @@ void Plane::init()
     string imgPath = path + "/resources/images/floor.jpeg";
 
     glGenTextures(1,&m_tex);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D,m_tex);
-	glActiveTexture(GL_TEXTURE0);
     int width, height, channels;
     
     unsigned char* data  = stbi_load(imgPath.c_str(),&width,&height,&channels,0);
@@ -131,8 +131,8 @@ void Plane::render()
     glUseProgram(m_program);
 
     glBindVertexArray(m_vao);
+    glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_tex);
-	glActiveTexture(GL_TEXTURE0);
 
     glDrawArrays(GL_TRIANGLES,0,6);
 	GLWrapper::errorCheck();
