@@ -301,8 +301,8 @@ void LightCube::render()
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }*/
-    //glDrawArrays(GL_TRIANGLES,0,36);
-    glDrawArraysInstanced(GL_TRIANGLES,0,36,100);
+    glDrawArrays(GL_TRIANGLES,0,36);
+    //glDrawArraysInstanced(GL_TRIANGLES,0,36,100);
     
     glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
