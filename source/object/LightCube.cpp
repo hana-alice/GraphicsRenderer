@@ -112,7 +112,6 @@ void LightCube::init()
     glUseProgram(m_program);
 
     unsigned int uniformBlockIndex = glGetUniformBlockIndex(m_program,"Matrices");
-	unsigned int a = Singleton::getInstance()->getUboBlockId();
     glUniformBlockBinding(m_program,uniformBlockIndex,Singleton::getInstance()->getUboBlockId());
     GLWrapper::errorCheck();
     GLint posLoc = glGetAttribLocation(m_program,"aPos");
@@ -218,97 +217,128 @@ void LightCube::init()
 
 	GLWrapper::errorCheck();
 
-
 	glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);
     glBindVertexArray(0);
+
+
+    glGenVertexArrays(1,&m_shadowVAO);
+    glBindVertexArray(m_shadowVAO);
+    glBindBuffer(GL_ARRAY_BUFFER,m_vbo);
+    glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
+    posLoc = glGetAttribLocation(Singleton::getInstance()->getShadowProgram(),"position");
+    glVertexAttribPointer(posLoc,3,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(void*)0);
+    glEnableVertexAttribArray(posLoc);
 	GLWrapper::errorCheck();
 }
 
 void LightCube::render()
 {
     glViewport(0, 0, 1280, 720);
-	glUseProgram(m_program);
-	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
 
-    glBindVertexArray(m_vao);
-	//GLint viewLoc = glGetUniformLocation(m_program, "viewMat");
-	//const glm::mat4* view = Singleton::getInstance()->getViewMat();
-	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
-	GLWrapper::errorCheck();
-    GLint viewPosLoc = glGetUniformLocation(m_program,"viewPos");
-    glUniform3fv(viewPosLoc,1,glm::value_ptr(Singleton::getInstance()->getCameraPosition()));
-
-    GLint lightPosLoc = glGetUniformLocation(m_program,"light.lightVec");
-    glUniform3fv(lightPosLoc,1,glm::value_ptr(Singleton::getInstance()->getCameraPosition()));
-
-    //glm::mat4 proj = glm::mat4(1.0f);
-	//proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
-	//GLint projectionLoc = glGetUniformLocation(m_program, "projectionMat");
-	//glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
-	
-	GLWrapper::errorCheck();
-	float shininess = 64;
-	GLint shininessLoc = glGetUniformLocation(m_program, "material.shininess");
-	glUniform1f(shininessLoc, shininess);
-
-	glm::vec3 lAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
-	GLint lAmbientLoc = glGetUniformLocation(m_program, "light.ambient");
-	glUniform3fv(lAmbientLoc, 1, glm::value_ptr(lAmbient));
-
-	glm::vec3 lDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
-	GLint lDiffuseLoc = glGetUniformLocation(m_program, "light.diffuse");
-	glUniform3fv(lDiffuseLoc, 1, glm::value_ptr(lDiffuse));
-
-	glm::vec3 lSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
-	GLint lSpecularLoc = glGetUniformLocation(m_program, "light.specular");
-	glUniform3fv(lSpecularLoc, 1, glm::value_ptr(lSpecular));
-    GLWrapper::errorCheck();
-
-	GLint constantLoc = glGetUniformLocation(m_program, "light.constant");
-	glUniform1f(constantLoc, 1.0);
-    GLint linearLoc = glGetUniformLocation(m_program, "light.linear");
-	glUniform1f(linearLoc, 0.09);
-    GLint quadraticLoc = glGetUniformLocation(m_program, "light.quadratic");
-	glUniform1f(quadraticLoc, 0.032);
-
-    GLint spotlightPosLoc = glGetUniformLocation(m_program, "light.position");
-	glUniform3fv(spotlightPosLoc, 1,glm::value_ptr(Singleton::getInstance()->getLightPos()));
-    GLint spotlightDirLoc = glGetUniformLocation(m_program, "light.direction");
-	glUniform3fv(spotlightDirLoc, 1, glm::value_ptr(Singleton::getInstance()->getCameraFront()));
-    GLint cutoffLoc = glGetUniformLocation(m_program, "light.cutoff");
-	glUniform1f(cutoffLoc, glm::cos(glm::radians(12.5f)));
-    GLint outerCutoffLoc = glGetUniformLocation(m_program, "light.outerCutoff");
-	glUniform1f(outerCutoffLoc, glm::cos(glm::radians(17.5f)));
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D,m_diffuseMap);
-
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D,m_specularMap);
-
-    /*for(unsigned int i = 0; i < 10; i++)
+    if(Singleton::getInstance()->getRenderTarget() == SHADOW)
     {
-        glm::mat4 model;
-        model = glm::translate(model, cubePositions[i]);
-        float angle = 20.0f * i;
-        model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-
-        GLint modelLoc = glGetUniformLocation(m_program, "model");
+		GLWrapper::errorCheck();
+        GLuint shadowPgm = Singleton::getInstance()->getShadowProgram();
+        glUseProgram(shadowPgm);
+        glEnable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        glBindVertexArray(m_shadowVAO);
+        glm::mat4 model = glm::mat4(1.0f);
+        GLint modelLoc = glGetUniformLocation(shadowPgm, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        glDrawArrays(GL_TRIANGLES,0,36);
+        glBindBuffer(GL_ARRAY_BUFFER,0);
+        glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+    }
+    else
+    {
+        glUseProgram(m_program);
+        glEnable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
 
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-    }*/
-    glDrawArrays(GL_TRIANGLES,0,36);
-    //glDrawArraysInstanced(GL_TRIANGLES,0,36,100);
-    
-    glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
-	glUseProgram(0);
+        glBindVertexArray(m_vao);
+        //GLint viewLoc = glGetUniformLocation(m_program, "viewMat");
+        //const glm::mat4* view = Singleton::getInstance()->getViewMat();
+        //glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(*view));
+        GLWrapper::errorCheck();
+        GLint viewPosLoc = glGetUniformLocation(m_program,"viewPos");
+        glUniform3fv(viewPosLoc,1,glm::value_ptr(Singleton::getInstance()->getCameraPosition()));
+
+        GLint lightPosLoc = glGetUniformLocation(m_program,"light.lightVec");
+        glUniform3fv(lightPosLoc,1,glm::value_ptr(Singleton::getInstance()->getCameraPosition()));
+
+        //glm::mat4 proj = glm::mat4(1.0f);
+        //proj = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
+        //GLint projectionLoc = glGetUniformLocation(m_program, "projectionMat");
+        //glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
+        
+        GLWrapper::errorCheck();
+        float shininess = 64;
+        GLint shininessLoc = glGetUniformLocation(m_program, "material.shininess");
+        glUniform1f(shininessLoc, shininess);
+
+        glm::vec3 lAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
+        GLint lAmbientLoc = glGetUniformLocation(m_program, "light.ambient");
+        glUniform3fv(lAmbientLoc, 1, glm::value_ptr(lAmbient));
+
+        glm::vec3 lDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+        GLint lDiffuseLoc = glGetUniformLocation(m_program, "light.diffuse");
+        glUniform3fv(lDiffuseLoc, 1, glm::value_ptr(lDiffuse));
+
+        glm::vec3 lSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
+        GLint lSpecularLoc = glGetUniformLocation(m_program, "light.specular");
+        glUniform3fv(lSpecularLoc, 1, glm::value_ptr(lSpecular));
+        GLWrapper::errorCheck();
+
+        GLint constantLoc = glGetUniformLocation(m_program, "light.constant");
+        glUniform1f(constantLoc, 1.0);
+        GLint linearLoc = glGetUniformLocation(m_program, "light.linear");
+        glUniform1f(linearLoc, 0.09);
+        GLint quadraticLoc = glGetUniformLocation(m_program, "light.quadratic");
+        glUniform1f(quadraticLoc, 0.032);
+
+        GLint spotlightPosLoc = glGetUniformLocation(m_program, "light.position");
+        glUniform3fv(spotlightPosLoc, 1,glm::value_ptr(Singleton::getInstance()->getLightPos()));
+        GLint spotlightDirLoc = glGetUniformLocation(m_program, "light.direction");
+        glUniform3fv(spotlightDirLoc, 1, glm::value_ptr(Singleton::getInstance()->getCameraFront()));
+        GLint cutoffLoc = glGetUniformLocation(m_program, "light.cutoff");
+        glUniform1f(cutoffLoc, glm::cos(glm::radians(12.5f)));
+        GLint outerCutoffLoc = glGetUniformLocation(m_program, "light.outerCutoff");
+        glUniform1f(outerCutoffLoc, glm::cos(glm::radians(17.5f)));
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D,m_diffuseMap);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D,m_specularMap);
+
+        /*for(unsigned int i = 0; i < 10; i++)
+        {
+            glm::mat4 model;
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+
+            GLint modelLoc = glGetUniformLocation(m_program, "model");
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }*/
+        glDrawArrays(GL_TRIANGLES,0,36);
+        //glDrawArraysInstanced(GL_TRIANGLES,0,36,100);
+        
+        glBindVertexArray(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+        glUseProgram(0);
+    }
+	
+	
 }
 
 void LightCube::destroy()

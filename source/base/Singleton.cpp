@@ -21,6 +21,10 @@ m_lightDir(-0.2f, -1.0f, -0.3f)
 
     m_camFront = glm::vec3(0.0,0.0,-1.0);
 	m_viewMat = glm::lookAt(glm::vec3(0.0, 0.0, 3.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+
+    m_paralellLightPos = glm::vec3(-2.0f, 4.0f, -1.0f);
+
+
 }
 Singleton::~Singleton()
 {
@@ -128,4 +132,59 @@ void Singleton::setUboBlockId(unsigned int id)
 unsigned int Singleton::getUboBlockId()
 {
     return m_uboId;
+}
+
+glm::vec3 Singleton::getParalellLightPos()
+{
+    return m_paralellLightPos;
+}
+
+unsigned int Singleton::getShadowProgram()
+{
+    return m_shadowProgram;
+}
+
+void Singleton::setShadowProgram(unsigned int pgm)
+{
+    m_shadowProgram = pgm;
+}
+
+void Singleton::setRenderTarget(RENDER_TARGET target)
+{
+    m_renderTarget = target;
+}
+
+RENDER_TARGET Singleton::getRenderTarget()
+{
+    return m_renderTarget;
+}
+
+void Singleton::setTexVBO(unsigned int texVBO)
+{
+    m_texVBO = texVBO;
+}
+
+unsigned int Singleton::getTexVBO()
+{
+    return m_texVBO;
+}
+
+void Singleton::setDepthTexture(unsigned int tex)
+{
+    m_depthTexture = tex;
+}
+
+unsigned int Singleton::getDepthTexture()
+{
+    return m_depthTexture;
+}
+
+void Singleton::setTextureProgram(unsigned int pgm)
+{
+    m_texturePgm = pgm;
+}
+
+unsigned int Singleton::getTextureProgram()
+{
+    return m_texturePgm;
 }

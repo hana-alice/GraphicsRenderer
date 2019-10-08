@@ -56,6 +56,8 @@ public:
 protected:
     virtual void initUbo();
 
+    virtual void initFbo();
+
 private:
 
     std::vector<InitFunc> m_initFuncVec;
@@ -63,4 +65,8 @@ private:
     std::vector<DestroyFunc> m_destroyFuncVec;
 
     GLuint  m_uboMatrices;//TODO: container to expandibility
+
+    GLuint  m_depthFbo;
+
+    GLuint m_depthTexture;
 };
