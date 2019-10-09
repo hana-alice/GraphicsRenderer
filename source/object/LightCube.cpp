@@ -229,6 +229,8 @@ void LightCube::init()
     posLoc = glGetAttribLocation(Singleton::getInstance()->getShadowProgram(),"position");
     glVertexAttribPointer(posLoc,3,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(void*)0);
     glEnableVertexAttribArray(posLoc);
+	uniformBlockIndex = glGetUniformBlockIndex(Singleton::getInstance()->getShadowProgram(), "Matrices");
+	glUniformBlockBinding(Singleton::getInstance()->getShadowProgram(), uniformBlockIndex, Singleton::getInstance()->getUboBlockId());
 	GLWrapper::errorCheck();
 }
 
@@ -244,14 +246,18 @@ void LightCube::render()
         glEnable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
+		GLWrapper::errorCheck();
         glBindVertexArray(m_shadowVAO);
+		GLWrapper::errorCheck();
         glm::mat4 model = glm::mat4(1.0f);
         GLint modelLoc = glGetUniformLocation(shadowPgm, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         glDrawArrays(GL_TRIANGLES,0,36);
-        glBindBuffer(GL_ARRAY_BUFFER,0);
+        glBindVertexArray(0);
         glDisable(GL_BLEND);
         glDisable(GL_DEPTH_TEST);
+        glUseProgram(0);
+		GLWrapper::errorCheck();
     }
     else
     {

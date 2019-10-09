@@ -69,4 +69,6 @@ private:
     GLuint  m_depthFbo;
 
     GLuint m_depthTexture;
+
+    GLuint m_texVao;
 };
