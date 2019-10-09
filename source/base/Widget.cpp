@@ -149,10 +149,10 @@ void Widget::initObject()
 	m_glWrapper->registerRenderFunc(object, &LightCube::render);
 	m_glWrapper->registerDestroyFunc(object, &LightCube::destroy);
 
-	//Plane* plane = new Plane();
-	//m_glWrapper->registerInitFunc(plane, &Plane::init);
-	//m_glWrapper->registerRenderFunc(plane, &Plane::render);
-	//m_glWrapper->registerDestroyFunc(plane, &Plane::destroy);
+	Plane* plane = new Plane();
+	m_glWrapper->registerInitFunc(plane, &Plane::init);
+	m_glWrapper->registerRenderFunc(plane, &Plane::render);
+	m_glWrapper->registerDestroyFunc(plane, &Plane::destroy);
 
 	//GeoObject* geoObject = new GeoObject();
 	//m_glWrapper->registerInitFunc(geoObject, &GeoObject::init);

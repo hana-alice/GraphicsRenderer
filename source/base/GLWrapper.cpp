@@ -168,16 +168,15 @@ void GLWrapper::initFbo()
 
 void GLWrapper::render()
 {
-#if 1
+
 #pragma region shadow
     Singleton::getInstance()->setRenderTarget(SHADOW);
     glViewport(0,0,SCR_WIDTH, SCR_HEIGHT);
     glBindFramebuffer(GL_FRAMEBUFFER,m_depthFbo);
     glClear(GL_DEPTH_BUFFER_BIT);
 	GLWrapper::errorCheck();
-    const glm::vec3 pos = Singleton::getInstance()->getParalellLightPos();
+    const glm::vec3 pos = Singleton::getInstance()->getCameraPosition();
     glm::mat4 viewMat = glm::lookAt(pos,glm::vec3(0.0f),glm::vec3(1.0f));
-	const glm::mat4* view = Singleton::getInstance()->getViewMat();
     GLfloat near_plane = 1.0f, far_plane = 7.5f;
     glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
 	//glm::mat4 lightProjection = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
@@ -187,7 +186,8 @@ void GLWrapper::render()
 
     for (RenderFunc f : m_renderFuncVec)
         f();
-#endif
+
+#if 0
 	GLWrapper::errorCheck();
 	GLuint texPgm = Singleton::getInstance()->getTextureProgram();
 	GLWrapper::errorCheck();
@@ -205,17 +205,18 @@ void GLWrapper::render()
 	glUseProgram(0);
 	glDisable(GL_BLEND);
 	GLWrapper::errorCheck();
+#endif
 #pragma endregion
 Singleton::getInstance()->setRenderTarget(SCENE);
-	//GLWrapper::errorCheck();
-    //glBindFramebuffer(GL_FRAMEBUFFER,0);
-    //preRenderFunc();
-	//GLWrapper::errorCheck();
-    //for (RenderFunc f : m_renderFuncVec)
-    //    //f();
-	//	GLWrapper::errorCheck();
-    //postRenderFunc();
-	//GLWrapper::errorCheck();
+	GLWrapper::errorCheck();
+    glBindFramebuffer(GL_FRAMEBUFFER,0);
+    preRenderFunc();
+	GLWrapper::errorCheck();
+    for (RenderFunc f : m_renderFuncVec)
+        f();
+	GLWrapper::errorCheck();
+    postRenderFunc();
+	GLWrapper::errorCheck();
 }
 
 void GLWrapper::preRenderFunc()
