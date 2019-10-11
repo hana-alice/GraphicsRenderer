@@ -175,9 +175,9 @@ void GLWrapper::render()
     glBindFramebuffer(GL_FRAMEBUFFER,m_depthFbo);
     glClear(GL_DEPTH_BUFFER_BIT);
 	GLWrapper::errorCheck();
-    const glm::vec3 pos = Singleton::getInstance()->getCameraPosition();
+    const glm::vec3 pos = Singleton::getInstance()->getParalellLightPos();
     glm::mat4 viewMat = glm::lookAt(pos,glm::vec3(0.0f),glm::vec3(1.0f));
-    GLfloat near_plane = 1.0f, far_plane = 7.5f;
+    GLfloat near_plane = 1.0f, far_plane = 100.0f;
     glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
 	//glm::mat4 lightProjection = glm::perspective(glm::radians(Singleton::getInstance()->getFOV()), (float)(1280.0 / 720.0), 0.1f, 100.0f);
     glBindBuffer(GL_UNIFORM_BUFFER, m_uboMatrices);
@@ -207,7 +207,8 @@ void GLWrapper::render()
 	GLWrapper::errorCheck();
 #endif
 #pragma endregion
-Singleton::getInstance()->setRenderTarget(SCENE);
+#if 1
+    Singleton::getInstance()->setRenderTarget(SCENE);
 	GLWrapper::errorCheck();
     glBindFramebuffer(GL_FRAMEBUFFER,0);
     preRenderFunc();
@@ -217,6 +218,7 @@ Singleton::getInstance()->setRenderTarget(SCENE);
 	GLWrapper::errorCheck();
     postRenderFunc();
 	GLWrapper::errorCheck();
+#endif
 }
 
 void GLWrapper::preRenderFunc()
