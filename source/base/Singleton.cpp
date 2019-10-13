@@ -24,7 +24,7 @@ m_lightDir(-0.2f, -1.0f, -0.3f)
 
     m_paralellLightPos = glm::vec3(-2.0f, 4.0f, -1.0f);
 
-
+	//m_camPosition = m_paralellLightPos;
 }
 Singleton::~Singleton()
 {

@@ -146,7 +146,7 @@ void LightCube::init()
 
     GLWrapper::errorCheck();
 
-    GLint offsetLoc = 0;
+    /*GLint offsetLoc = 0;
     glm::vec2 translations[100];
     int index = 0;
     float offset = 0.1f;
@@ -165,7 +165,7 @@ void LightCube::init()
             glUniform2fv(offsetLoc,1,glm::value_ptr(translations[index]));
             index++;
         }
-    }
+    }*/
     GLWrapper::errorCheck();
 
 

@@ -88,14 +88,6 @@ void Plane::init()
 	GLint modelLoc = glGetUniformLocation(m_program, "modelMat");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMat));
 
-    const glm::vec3 pos = Singleton::getInstance()->getParalellLightPos();
-    glm::mat4 viewMat = glm::lookAt(pos,glm::vec3(0.0f),glm::vec3(1.0f));
-    GLfloat near_plane = 1.0f, far_plane = 100.0f;
-    glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-	modelLoc = glGetUniformLocation(m_program, "lightSpaceMatrix");
-    glm::mat4 vpMat = lightProjection * viewMat;
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(vpMat));
-
 	string path = CommonFunc::getResourceDirectory();
     string imgPath = path + "/resources/images/floor.jpeg";
 
@@ -163,6 +155,15 @@ void Plane::render()
 
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D,Singleton::getInstance()->getDepthTexture());
+
+		const glm::vec3 pos = Singleton::getInstance()->getParalellLightPos();
+		//const glm::vec3 pos = Singleton::getInstance()->getCameraPosition();
+		glm::mat4 viewMat = glm::lookAt(pos, glm::vec3(0.0f), glm::vec3(1.0f));
+		GLfloat near_plane = 1.0f, far_plane = 100.0f;
+		glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+		GLint modelLoc = glGetUniformLocation(m_program, "lightSpaceMatrix");
+		glm::mat4 vpMat = lightProjection * viewMat;
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(vpMat));
 
         glDrawArrays(GL_TRIANGLES,0,6);
         GLWrapper::errorCheck();
