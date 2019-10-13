@@ -22,4 +22,6 @@ private:
 	GLuint m_vbo;
 	GLuint m_ibo;
 	GLuint m_tex;
+
+	GLuint m_shadowVao;
 };

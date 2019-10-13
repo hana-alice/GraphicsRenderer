@@ -116,32 +116,91 @@ void Plane::init()
 	GLWrapper::errorCheck();
     
     GLuint texSamplerLoc = glGetUniformLocation(m_program,"plane");
-    glUniform1i(texSamplerLoc,1);
+    glUniform1i(texSamplerLoc,0);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D,Singleton::getInstance()->getDepthTexture());
+    GLuint shadowSamplerLoc = glGetUniformLocation(m_program,"shadowSmp");
+    glUniform1i(shadowSamplerLoc,1);
+    
     glBindTexture(GL_TEXTURE_2D,0);
     glUseProgram(0);
+    glBindVertexArray(0);
+	GLWrapper::errorCheck();
+
+    glGenVertexArrays(1,&m_shadowVao);
+    glBindVertexArray(m_shadowVao);
+    glBindBuffer(GL_ARRAY_BUFFER,m_vbo);
+    posLoc = glGetAttribLocation(Singleton::getInstance()->getShadowProgram(),"position");
+    glVertexAttribPointer(posLoc,3,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(void*)0);
+    glEnableVertexAttribArray(posLoc);
+    uniformBlockIndex = glGetUniformBlockIndex(Singleton::getInstance()->getShadowProgram(), "Matrices");
+	glUniformBlockBinding(Singleton::getInstance()->getShadowProgram(), uniformBlockIndex, Singleton::getInstance()->getUboBlockId());
     glBindVertexArray(0);
 	GLWrapper::errorCheck();
 }
 
 void Plane::render()
 {
-    glViewport(0,0,SCR_WIDTH,SCR_HEIGHT);
-	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
-    glUseProgram(m_program);
+    if (Singleton::getInstance()->getRenderTarget() == SCENE)
+    {
+        glViewport(0,0,SCR_WIDTH,SCR_HEIGHT);
+        glEnable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
+        glUseProgram(m_program);
 
-    glBindVertexArray(m_vao);
-    glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_tex);
+        glBindVertexArray(m_vao);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_tex);
 
-    glDrawArrays(GL_TRIANGLES,0,6);
-	GLWrapper::errorCheck();
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D,Singleton::getInstance()->getDepthTexture());
 
-	glBindTexture(GL_TEXTURE_2D,0);
-	glDisable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
-	glBindVertexArray(0);
-	glUseProgram(0);
+		const glm::vec3 pos = Singleton::getInstance()->getParalellLightPos();
+		//const glm::vec3 pos = Singleton::getInstance()->getCameraPosition();
+		glm::mat4 viewMat = glm::lookAt(pos, glm::vec3(0.0f), glm::vec3(1.0f));
+		GLfloat near_plane = 1.0f, far_plane = 100.0f;
+		glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+		GLint modelLoc = glGetUniformLocation(m_program, "lightSpaceMatrix");
+		glm::mat4 vpMat = lightProjection * viewMat;
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(vpMat));
+
+        glDrawArrays(GL_TRIANGLES,0,6);
+        GLWrapper::errorCheck();
+
+        glBindTexture(GL_TEXTURE_2D,0);
+        glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+        glBindVertexArray(0);
+        glUseProgram(0);
+    }
+    else
+    {
+        #if 0
+        GLWrapper::errorCheck();
+        GLuint shadowPgm = Singleton::getInstance()->getShadowProgram();
+        glUseProgram(shadowPgm);
+        glEnable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+		GLWrapper::errorCheck();
+        glBindVertexArray(m_shadowVao);
+		GLWrapper::errorCheck();
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0, -7.0, 0.0));
+	    model = glm::scale(model, glm::vec3(8.0, 1.0, 8.0));
+        GLint modelLoc = glGetUniformLocation(shadowPgm, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        glDrawArrays(GL_TRIANGLES,0,6);
+        glBindVertexArray(0);
+        glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+        glUseProgram(0);
+		GLWrapper::errorCheck();
+        #endif
+    }
+    
+    
 }
 
 void Plane::destroy()

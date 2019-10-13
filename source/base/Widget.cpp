@@ -139,10 +139,10 @@ void Widget::initObject()
 	//m_glWrapper->registerDestroyFunc(cube, &Cube::destroy);
 
 	//two object below uncomment for flash light effect
-	Light* light = new Light();
-	m_glWrapper->registerInitFunc(light, &Light::init);
-	m_glWrapper->registerRenderFunc(light, &Light::render);
-	m_glWrapper->registerDestroyFunc(light, &Light::destroy);
+	//Light* light = new Light();
+	//m_glWrapper->registerInitFunc(light, &Light::init);
+	//m_glWrapper->registerRenderFunc(light, &Light::render);
+	//m_glWrapper->registerDestroyFunc(light, &Light::destroy);
 	
 	LightCube* object = new LightCube();
 	m_glWrapper->registerInitFunc(object, &LightCube::init);

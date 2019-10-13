@@ -20,6 +20,7 @@ private:
 	GLuint m_fragmentShader;
 	GLuint m_program;
 	GLuint m_vao;
+	GLuint m_shadowVAO;
 	GLuint m_vbo;
 	GLuint m_ibo;
 	GLuint m_diffuseMap;

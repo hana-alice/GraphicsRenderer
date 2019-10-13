@@ -6,6 +6,12 @@ class GLWrapper;
 static const int SCR_WIDTH = 1280;
 static const int SCR_HEIGHT = 720;
 
+enum RENDER_TARGET
+{
+    SCENE,
+    SHADOW
+};
+
 class Singleton
 {
 public:
@@ -43,6 +49,8 @@ public:
 
     glm::vec3 getLightPos();
 
+    glm::vec3 getParalellLightPos();
+
     void setLightPos(const glm::vec3& lightPos);
 
     glm::vec3 getLightDir();
@@ -60,6 +68,28 @@ public:
 
     unsigned int getUboBlockId();
 
+    void setShadowProgram(unsigned int pgm);
+
+    unsigned int getShadowProgram();
+
+    void setRenderTarget(RENDER_TARGET target);
+
+    RENDER_TARGET getRenderTarget();
+
+    void setTexVBO(unsigned int texvbo);
+
+    unsigned int getTexVBO();
+
+    void setTextureProgram(unsigned int texpgm);
+
+    unsigned int getTextureProgram();
+
+    void setDepthTexture(unsigned int depTex);
+
+    unsigned int getDepthTexture();
+
+private:
+
 private:
     static Singleton*   s_instance;
     GLWrapper*          m_glWrapper;
@@ -73,6 +103,12 @@ private:
     glm::vec3           m_camFront;
     glm::vec3           m_lightPos;
     glm::vec3           m_lightDir;
+    glm::vec3           m_paralellLightPos;
     unsigned int        m_skyboxTexture;
     unsigned int        m_uboId;
+    unsigned int        m_shadowProgram;
+    RENDER_TARGET       m_renderTarget;
+    unsigned int        m_texVBO;
+    unsigned int        m_texturePgm;
+    unsigned int        m_depthTexture;
 };
