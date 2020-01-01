@@ -1,14 +1,14 @@
 #version 330 core
 out vec4 FragColor;
 in vec2 TexCoord;
-in vec4 lsPos;
+//in vec4 lsPos;
 
 uniform sampler2D plane;
-uniform sampler2D shadowSmp;
+//uniform sampler2D shadowSmp;
 void main()
 {
     FragColor = texture(plane, TexCoord);
-
+#if 0
     vec3 projCoords = lsPos.xyz/lsPos.w;
     projCoords = projCoords*0.5 + 0.5;
     float currentDepth = projCoords.z;
@@ -31,4 +31,5 @@ void main()
     //this is Y texsize not work
     /*if(texSize.x < 1/1280.0)
         FragColor = vec4(1.0,1.0,0.0, 1.0);*/
+#endif
 }

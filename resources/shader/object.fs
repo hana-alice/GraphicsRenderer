@@ -42,7 +42,7 @@ void main()
     vec3 lightDir =normalize(light.lightVec - FragPos);
     float theta = dot(lightDir,normalize(-light.direction));
     float epsilon = light.cutoff - light.outerCutoff;
-    float intensity = clamp((theta - light.outerCutoff)/epsilon,0.0,1.0);
+    float intensity =1.0;// clamp((theta - light.outerCutoff)/epsilon,0.0,1.0);
     vec3 result;
 
     //ambient

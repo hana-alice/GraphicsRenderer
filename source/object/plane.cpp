@@ -84,7 +84,7 @@ void Plane::init()
 
 	glm::mat4 modelMat(1.0);
 	modelMat = glm::translate(modelMat, glm::vec3(0.0, -1.0, 0.0));
-	modelMat = glm::scale(modelMat, glm::vec3(8.0, 1.0, 8.0));
+	modelMat = glm::scale(modelMat, glm::vec3(20.0, 1.0, 20.0));
 	GLint modelLoc = glGetUniformLocation(m_program, "modelMat");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMat));
 
@@ -118,26 +118,11 @@ void Plane::init()
     GLuint texSamplerLoc = glGetUniformLocation(m_program,"plane");
     glUniform1i(texSamplerLoc,0);
 
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D,Singleton::getInstance()->getDepthTexture());
-    GLuint shadowSamplerLoc = glGetUniformLocation(m_program,"shadowSmp");
-    glUniform1i(shadowSamplerLoc,1);
-    
     glBindTexture(GL_TEXTURE_2D,0);
     glUseProgram(0);
     glBindVertexArray(0);
 	GLWrapper::errorCheck();
 
-    glGenVertexArrays(1,&m_shadowVao);
-    glBindVertexArray(m_shadowVao);
-    glBindBuffer(GL_ARRAY_BUFFER,m_vbo);
-    posLoc = glGetAttribLocation(Singleton::getInstance()->getShadowProgram(),"position");
-    glVertexAttribPointer(posLoc,3,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(void*)0);
-    glEnableVertexAttribArray(posLoc);
-    uniformBlockIndex = glGetUniformBlockIndex(Singleton::getInstance()->getShadowProgram(), "Matrices");
-	glUniformBlockBinding(Singleton::getInstance()->getShadowProgram(), uniformBlockIndex, Singleton::getInstance()->getUboBlockId());
-    glBindVertexArray(0);
-	GLWrapper::errorCheck();
 }
 
 void Plane::render()
@@ -148,14 +133,14 @@ void Plane::render()
         glEnable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
         glUseProgram(m_program);
-
+        GLWrapper::errorCheck();
         glBindVertexArray(m_vao);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_tex);
-
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D,Singleton::getInstance()->getDepthTexture());
-
+        GLWrapper::errorCheck();
+        //glActiveTexture(GL_TEXTURE1);
+        //glBindTexture(GL_TEXTURE_2D,Singleton::getInstance()->getDepthTexture());
+        //GLWrapper::errorCheck();
 		const glm::vec3 pos = Singleton::getInstance()->getParalellLightPos();
 		//const glm::vec3 pos = Singleton::getInstance()->getCameraPosition();
 		glm::mat4 viewMat = glm::lookAt(pos, glm::vec3(0.0f), glm::vec3(1.0f));
@@ -164,7 +149,7 @@ void Plane::render()
 		GLint modelLoc = glGetUniformLocation(m_program, "lightSpaceMatrix");
 		glm::mat4 vpMat = lightProjection * viewMat;
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(vpMat));
-
+        GLWrapper::errorCheck();
         glDrawArrays(GL_TRIANGLES,0,6);
         GLWrapper::errorCheck();
 

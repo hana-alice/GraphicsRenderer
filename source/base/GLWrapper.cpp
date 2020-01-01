@@ -48,8 +48,57 @@ void GLWrapper::init()
 {
     initUbo();
     initFbo();
+    initGBuffer();
     for(InitFunc f : m_initFuncVec)
         f();
+    glBindFramebuffer(GL_FRAMEBUFFER,0);
+}
+
+void GLWrapper::initGBuffer()
+{
+    glGenFramebuffers(1,&m_gBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_gBuffer);
+    GLuint position, normal, albedoSpec;
+    Singleton::getInstance()->setGBuffer(m_gBuffer);
+
+    glGenTextures(1, &position);
+    glBindTexture(GL_TEXTURE_2D, position);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH,SCR_HEIGHT,0,GL_RGB,GL_FLOAT,NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, position,0);
+    Singleton::getInstance()->setGBufferPosTexture(position);
+
+    glGenTextures(1, &normal);
+    glBindTexture(GL_TEXTURE_2D, normal);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH,SCR_HEIGHT,0,GL_RGB,GL_FLOAT,NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, normal,0);
+    Singleton::getInstance()->setGBufferNormTexture(normal);
+
+    glGenTextures(1, &albedoSpec);
+    glBindTexture(GL_TEXTURE_2D, albedoSpec);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, albedoSpec,0);
+    Singleton::getInstance()->setGBufferAlbedoSpec(albedoSpec);
+
+    GLuint attacments[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
+    glDrawBuffers(3, attacments);
+
+    //render target --- depth
+    glGenRenderbuffers(1,&m_depthRbo);
+    glBindRenderbuffer(GL_RENDERBUFFER,m_depthRbo);
+    glRenderbufferStorage(GL_RENDERBUFFER,GL_DEPTH_COMPONENT,SCR_WIDTH, SCR_HEIGHT);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthRbo);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        std::cout << "framebuffer not complete." << std::endl;
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    Singleton::getInstance()->setDepthRBO(m_depthRbo);
 }
 
 void GLWrapper::initUbo()
@@ -168,7 +217,7 @@ void GLWrapper::initFbo()
 
 void GLWrapper::render()
 {
-
+#if 0
 #pragma region shadow
     Singleton::getInstance()->setRenderTarget(SHADOW);
     glViewport(0,0,SCR_WIDTH, SCR_HEIGHT);
@@ -187,7 +236,7 @@ void GLWrapper::render()
     for (RenderFunc f : m_renderFuncVec)
         f();
 
-#if 0
+
 	GLWrapper::errorCheck();
 	GLuint texPgm = Singleton::getInstance()->getTextureProgram();
 	GLWrapper::errorCheck();
@@ -208,9 +257,10 @@ void GLWrapper::render()
 #endif
 #pragma endregion
 #if 1
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     Singleton::getInstance()->setRenderTarget(SCENE);
 	GLWrapper::errorCheck();
-    glBindFramebuffer(GL_FRAMEBUFFER,0);
     preRenderFunc();
 	GLWrapper::errorCheck();
     for (RenderFunc f : m_renderFuncVec)

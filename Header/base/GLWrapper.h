@@ -58,6 +58,8 @@ protected:
 
     virtual void initFbo();
 
+    virtual void initGBuffer();
+
 private:
 
     std::vector<InitFunc> m_initFuncVec;
@@ -68,7 +70,11 @@ private:
 
     GLuint  m_depthFbo;
 
-    GLuint m_depthTexture;
+    GLuint  m_depthTexture;//to be deleted
 
-    GLuint m_texVao;
+    GLuint  m_depthRbo;
+
+    GLuint  m_texVao;
+
+    GLuint  m_gBuffer;
 };
