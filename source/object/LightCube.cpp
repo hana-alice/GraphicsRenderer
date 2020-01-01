@@ -9,11 +9,9 @@
 #include "glm/gtc/type_ptr.hpp"
 #include <sstream>
 #include <vector>
-#ifndef STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#endif
-#include "stbimg/stb_image.h"
 
+#include "stbimg/stb_image.h"
+#include "Cube.h"
 #pragma region vertices
 static float vertices[] = {
         // back face
@@ -60,7 +58,7 @@ static float vertices[] = {
             -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left
     };
 
-glm::vec3 cubePositions[] = {
+static glm::vec3 cubePositions[] = {
     glm::vec3( 0.0f,  0.0f,  0.0f),
     glm::vec3( 2.0f,  5.0f, -15.0f),
     glm::vec3(-1.5f, -2.2f, -2.5f),
@@ -86,7 +84,7 @@ GLfloat quadVerts[] =
 
 #pragma endregion
 
-LightCube::LightCube()
+LightCube::LightCube():m_cube(nullptr)
 {
 }
 
@@ -304,6 +302,12 @@ void LightCube::init()
     glBindVertexArray(0);
     glUseProgram(0);
     
+    if (!m_cube)
+    {
+        m_cube = new Cube;
+    }
+    m_cube->init();
+    
     GLWrapper::errorCheck();
 }
 
@@ -395,7 +399,19 @@ void LightCube::render()
         glBindTexture(GL_TEXTURE_2D, 0);
         glUseProgram(0);
     }
-	
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, Singleton::getInstance()->getGBuffer());
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glBlitFramebuffer(0,0,SCR_WIDTH,SCR_HEIGHT,0,0,SCR_WIDTH,SCR_HEIGHT,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
+    glBindFramebuffer(GL_FRAMEBUFFER,0);
+    for (size_t i = 0; i < lightPositions.size(); i++)
+    {
+        m_cube->setModelMatrix(glm::translate(glm::mat4(1.0), lightPositions[i]));
+        m_cube->setColor(glm::vec4(lightColors[i], 1.0));
+        m_cube->render();
+
+    }
+    
 	
 }
 

@@ -2,6 +2,7 @@
 #include "glad\glad.h"
 
 class GLWrapper;
+class Cube;
 class LightCube
 {
 public:
@@ -29,4 +30,5 @@ private:
 	GLuint m_quadVao;
 	GLuint m_quadVbo;
 	GLuint m_shadingVAO;
+	Cube*  m_cube;
 };
