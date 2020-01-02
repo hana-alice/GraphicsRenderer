@@ -51,10 +51,8 @@ void Widget::init()
 
 void Widget::render()
 {
-    glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	//
-	//glEnable(GL_MULTISAMPLE);
     m_glWrapper->render();
 
 #ifdef GLFWAPI
@@ -149,10 +147,10 @@ void Widget::initObject()
 	m_glWrapper->registerRenderFunc(object, &LightCube::render);
 	m_glWrapper->registerDestroyFunc(object, &LightCube::destroy);
 
-	Plane* plane = new Plane();
-	m_glWrapper->registerInitFunc(plane, &Plane::init);
-	m_glWrapper->registerRenderFunc(plane, &Plane::render);
-	m_glWrapper->registerDestroyFunc(plane, &Plane::destroy);
+	//Plane* plane = new Plane();
+	//m_glWrapper->registerInitFunc(plane, &Plane::init);
+	//m_glWrapper->registerRenderFunc(plane, &Plane::render);
+	//m_glWrapper->registerDestroyFunc(plane, &Plane::destroy);
 
 	//GeoObject* geoObject = new GeoObject();
 	//m_glWrapper->registerInitFunc(geoObject, &GeoObject::init);

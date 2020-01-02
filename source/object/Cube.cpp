@@ -26,7 +26,7 @@ glm::vec3 cubePositions[] = {
 };
 
 Cube::Cube(/* args */)
-    :m_glWrapper(nullptr)
+    :m_glWrapper(nullptr),m_color(glm::vec4(1.0)),m_modelMat(glm::mat4(1.0))
 {
 }
 
@@ -66,47 +66,47 @@ void Cube::init()
 
     float vertices[] = 
     {
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+    -0.2f, -0.2f, -0.2f,  0.0f,  0.0f, -1.0f,
+     0.2f, -0.2f, -0.2f,  0.0f,  0.0f, -1.0f, 
+     0.2f,  0.2f, -0.2f,  0.0f,  0.0f, -1.0f, 
+     0.2f,  0.2f, -0.2f,  0.0f,  0.0f, -1.0f, 
+    -0.2f,  0.2f, -0.2f,  0.0f,  0.0f, -1.0f, 
+    -0.2f, -0.2f, -0.2f,  0.0f,  0.0f, -1.0f, 
 
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.2f, -0.2f,  0.2f,  0.0f,  0.0f, 1.0f,
+     0.2f, -0.2f,  0.2f,  0.0f,  0.0f, 1.0f,
+     0.2f,  0.2f,  0.2f,  0.0f,  0.0f, 1.0f,
+     0.2f,  0.2f,  0.2f,  0.0f,  0.0f, 1.0f,
+    -0.2f,  0.2f,  0.2f,  0.0f,  0.0f, 1.0f,
+    -0.2f, -0.2f,  0.2f,  0.0f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.2f,  0.2f,  0.2f, -1.0f,  0.0f,  0.0f,
+    -0.2f,  0.2f, -0.2f, -1.0f,  0.0f,  0.0f,
+    -0.2f, -0.2f, -0.2f, -1.0f,  0.0f,  0.0f,
+    -0.2f, -0.2f, -0.2f, -1.0f,  0.0f,  0.0f,
+    -0.2f, -0.2f,  0.2f, -1.0f,  0.0f,  0.0f,
+    -0.2f,  0.2f,  0.2f, -1.0f,  0.0f,  0.0f,
 
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.2f,  0.2f,  0.2f,  1.0f,  0.0f,  0.0f,
+     0.2f,  0.2f, -0.2f,  1.0f,  0.0f,  0.0f,
+     0.2f, -0.2f, -0.2f,  1.0f,  0.0f,  0.0f,
+     0.2f, -0.2f, -0.2f,  1.0f,  0.0f,  0.0f,
+     0.2f, -0.2f,  0.2f,  1.0f,  0.0f,  0.0f,
+     0.2f,  0.2f,  0.2f,  1.0f,  0.0f,  0.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+    -0.2f, -0.2f, -0.2f,  0.0f, -1.0f,  0.0f,
+     0.2f, -0.2f, -0.2f,  0.0f, -1.0f,  0.0f,
+     0.2f, -0.2f,  0.2f,  0.0f, -1.0f,  0.0f,
+     0.2f, -0.2f,  0.2f,  0.0f, -1.0f,  0.0f,
+    -0.2f, -0.2f,  0.2f,  0.0f, -1.0f,  0.0f,
+    -0.2f, -0.2f, -0.2f,  0.0f, -1.0f,  0.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+    -0.2f,  0.2f, -0.2f,  0.0f,  1.0f,  0.0f,
+     0.2f,  0.2f, -0.2f,  0.0f,  1.0f,  0.0f,
+     0.2f,  0.2f,  0.2f,  0.0f,  1.0f,  0.0f,
+     0.2f,  0.2f,  0.2f,  0.0f,  1.0f,  0.0f,
+    -0.2f,  0.2f,  0.2f,  0.0f,  1.0f,  0.0f,
+    -0.2f,  0.2f, -0.2f,  0.0f,  1.0f,  0.0f
     };
 
     unsigned short indices[] = 
@@ -147,18 +147,7 @@ void Cube::init()
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
 	GLWrapper::errorCheck();
 
-    GLint texLoc = glGetAttribLocation(m_program,"aNorm");
-    glVertexAttribPointer(texLoc,3,GL_FLOAT,GL_FALSE,6*sizeof(GL_FLOAT),(void*)(3*sizeof(GL_FLOAT)));
-    glEnableVertexAttribArray(texLoc);
-	GLWrapper::errorCheck();
-
     glUseProgram(m_program);
-    m_tex = Singleton::getInstance()->getSkyboxTexture();
-	GLuint samplerPos1 = glGetUniformLocation(m_program, "texture1");
-	GLWrapper::errorCheck();
-	glUniform1i(samplerPos1, 0);
-	glActiveTexture(GL_TEXTURE0);
-	GLWrapper::errorCheck();
 
     unsigned int uniformBlockIndex = glGetUniformBlockIndex(m_program,"Matrices");
     glUniformBlockBinding(m_program,uniformBlockIndex,Singleton::getInstance()->getUboBlockId());
@@ -230,14 +219,16 @@ void Cube::render()
 
     glm::mat4 model = glm::mat4(1.0f);
     GLint modelLoc = glGetUniformLocation(m_program, "modelMat");
+    model *= m_modelMat;
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
     glm::vec3 camPos = Singleton::getInstance()->getCameraPosition();
     GLint camPosLoc = glGetUniformLocation(m_program, "camPos");
     glUniform3fv(camPosLoc, 1, glm::value_ptr(camPos));
 
-    glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, Singleton::getInstance()->getSkyboxTexture());
+    GLint colorPos = glGetUniformLocation(m_program, "outColor");
+    glUniform4fv(colorPos, 1, glm::value_ptr(m_color));
+
     glDrawArrays(GL_TRIANGLES,0,36);
     GLWrapper::errorCheck();
     
@@ -249,4 +240,14 @@ void Cube::render()
 void Cube::destroy()
 {
     delete this;
+}
+
+void Cube::setModelMatrix(glm::mat4 modelMat)
+{
+    m_modelMat = modelMat;
+}
+
+void Cube::setColor(glm::vec4 color)
+{
+    m_color = color;
 }

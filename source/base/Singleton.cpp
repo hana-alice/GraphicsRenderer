@@ -124,12 +124,12 @@ void Singleton::setSkyboxTexture(GLuint tex)
     m_skyboxTexture = tex;
 }
 
-void Singleton::setUboBlockId(unsigned int id)
+void Singleton::setUboBlockId(GLuint id)
 {
     m_uboId = id;
 }
 
-unsigned int Singleton::getUboBlockId()
+GLuint Singleton::getUboBlockId()
 {
     return m_uboId;
 }
@@ -139,12 +139,12 @@ glm::vec3 Singleton::getParalellLightPos()
     return m_paralellLightPos;
 }
 
-unsigned int Singleton::getShadowProgram()
+GLuint Singleton::getShadowProgram()
 {
     return m_shadowProgram;
 }
 
-void Singleton::setShadowProgram(unsigned int pgm)
+void Singleton::setShadowProgram(GLuint pgm)
 {
     m_shadowProgram = pgm;
 }
@@ -159,32 +159,82 @@ RENDER_TARGET Singleton::getRenderTarget()
     return m_renderTarget;
 }
 
-void Singleton::setTexVBO(unsigned int texVBO)
+void Singleton::setTexVBO(GLuint texVBO)
 {
     m_texVBO = texVBO;
 }
 
-unsigned int Singleton::getTexVBO()
+GLuint Singleton::getTexVBO()
 {
     return m_texVBO;
 }
 
-void Singleton::setDepthTexture(unsigned int tex)
+void Singleton::setDepthTexture(GLuint tex)
 {
     m_depthTexture = tex;
 }
 
-unsigned int Singleton::getDepthTexture()
+GLuint Singleton::getDepthTexture()
 {
     return m_depthTexture;
 }
 
-void Singleton::setTextureProgram(unsigned int pgm)
+void Singleton::setTextureProgram(GLuint pgm)
 {
     m_texturePgm = pgm;
 }
 
-unsigned int Singleton::getTextureProgram()
+GLuint Singleton::getTextureProgram()
 {
     return m_texturePgm;
+}
+
+void Singleton::setGBuffer(GLuint buf)
+{
+    m_gBuffer = buf;
+}
+
+GLuint Singleton::getGBuffer()
+{
+    return m_gBuffer;
+}
+
+void Singleton::setGBufferPosTexture(GLuint gpos)
+{
+    m_gPosTex = gpos;
+}
+
+GLuint Singleton::getGBufferPosTexture()
+{
+    return m_gPosTex;
+}
+
+void Singleton::setGBufferNormTexture(GLuint gnorm)
+{
+    m_gNormTex = gnorm;
+}
+
+GLuint Singleton::getGBufferNormTexture()
+{
+    return m_gNormTex;
+}
+
+void Singleton::setGBufferAlbedoSpec(GLuint aspec)
+{
+    m_gAlbedoSpec = aspec;
+}
+
+GLuint Singleton::getGBufferAlbedoSpec()
+{
+    return m_gAlbedoSpec;
+}
+
+void Singleton::setDepthRBO(GLuint depthrbo)
+{
+    m_depthRBO = depthrbo;
+}
+
+GLuint Singleton::getDepthRBO()
+{
+    return m_depthRBO;
 }

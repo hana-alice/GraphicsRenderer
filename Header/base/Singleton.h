@@ -1,5 +1,6 @@
 #pragma once
 #include "glm/glm.hpp"
+#include "glad/glad.h"
 
 class GLWrapper;
 
@@ -57,37 +58,56 @@ public:
 
     void setLightDir(const glm::vec3& lightDir);
 
-    void setSkyboxTexture(unsigned int texture);
+    void setSkyboxTexture(GLuint texture);
 
-    unsigned int getSkyboxTexture();
+    GLuint getSkyboxTexture();
 
     GLWrapper* getGLWrapper();
 
     //TODO: compatible with container later
-    void setUboBlockId(unsigned int id);
+    void setUboBlockId(GLuint id);
 
-    unsigned int getUboBlockId();
+    GLuint getUboBlockId();
 
-    void setShadowProgram(unsigned int pgm);
+    void setShadowProgram(GLuint pgm);
 
-    unsigned int getShadowProgram();
+    GLuint getShadowProgram();
 
     void setRenderTarget(RENDER_TARGET target);
 
     RENDER_TARGET getRenderTarget();
 
-    void setTexVBO(unsigned int texvbo);
+    void setTexVBO(GLuint texvbo);
 
-    unsigned int getTexVBO();
+    GLuint getTexVBO();
 
-    void setTextureProgram(unsigned int texpgm);
+    void setTextureProgram(GLuint texpgm);
 
-    unsigned int getTextureProgram();
+    GLuint getTextureProgram();
 
-    void setDepthTexture(unsigned int depTex);
+    void setDepthTexture(GLuint depTex);
 
-    unsigned int getDepthTexture();
+    GLuint getDepthTexture();
 
+    void setGBuffer(GLuint bufid);
+
+    GLuint getGBuffer();
+
+    void setGBufferPosTexture(GLuint gpos);
+
+    GLuint getGBufferPosTexture();
+
+    void setGBufferNormTexture(GLuint gnorm);
+
+    GLuint getGBufferNormTexture();
+
+    void setGBufferAlbedoSpec(GLuint aspec);
+
+    GLuint getGBufferAlbedoSpec();
+
+    void setDepthRBO(GLuint depthrbo);
+
+    GLuint getDepthRBO();
 private:
 
 private:
@@ -104,11 +124,16 @@ private:
     glm::vec3           m_lightPos;
     glm::vec3           m_lightDir;
     glm::vec3           m_paralellLightPos;
-    unsigned int        m_skyboxTexture;
-    unsigned int        m_uboId;
-    unsigned int        m_shadowProgram;
+    GLuint              m_skyboxTexture;
+    GLuint              m_uboId;
+    GLuint              m_shadowProgram;
     RENDER_TARGET       m_renderTarget;
-    unsigned int        m_texVBO;
-    unsigned int        m_texturePgm;
-    unsigned int        m_depthTexture;
+    GLuint              m_texVBO;
+    GLuint              m_texturePgm;
+    GLuint              m_depthTexture;
+    GLuint              m_gBuffer;
+    GLuint              m_gPosTex;
+    GLuint              m_gNormTex;
+    GLuint              m_gAlbedoSpec;
+    GLuint              m_depthRBO;
 };
