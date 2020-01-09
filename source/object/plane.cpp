@@ -83,7 +83,7 @@ void Plane::init()
     glUniformBlockBinding(m_program,uniformBlockIndex,Singleton::getInstance()->getUboBlockId());
 
 	glm::mat4 modelMat(1.0);
-	modelMat = glm::translate(modelMat, glm::vec3(0.0, -1.0, 0.0));
+	modelMat = glm::translate(modelMat, glm::vec3(0.0, 0.5, 0.0));
 	modelMat = glm::scale(modelMat, glm::vec3(20.0, 1.0, 20.0));
 	GLint modelLoc = glGetUniformLocation(m_program, "modelMat");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMat));

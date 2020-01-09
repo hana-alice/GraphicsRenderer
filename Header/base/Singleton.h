@@ -105,6 +105,10 @@ public:
 
     GLuint getGBufferAlbedoSpec();
 
+    void setGbufferPosDepth(GLuint posDepth);
+
+    GLuint getGBufferPosDepth();
+
     void setDepthRBO(GLuint depthrbo);
 
     GLuint getDepthRBO();
@@ -136,4 +140,5 @@ private:
     GLuint              m_gNormTex;
     GLuint              m_gAlbedoSpec;
     GLuint              m_depthRBO;
+    GLuint              m_gPosDepth;
 };

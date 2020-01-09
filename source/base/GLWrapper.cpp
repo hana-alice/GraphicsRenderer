@@ -58,16 +58,24 @@ void GLWrapper::initGBuffer()
 {
     glGenFramebuffers(1,&m_gBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, m_gBuffer);
-    GLuint position, normal, albedoSpec;
+    GLuint position, normal, albedoSpec, positionDepth;
     Singleton::getInstance()->setGBuffer(m_gBuffer);
 
     glGenTextures(1, &position);
     glBindTexture(GL_TEXTURE_2D, position);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH,SCR_HEIGHT,0,GL_RGB,GL_FLOAT,NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCR_WIDTH,SCR_HEIGHT,0,GL_RGB,GL_FLOAT,NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, position,0);
     Singleton::getInstance()->setGBufferPosTexture(position);
+
+    //glGenTextures(1, &positionDepth);
+    //glBindTexture(GL_TEXTURE_2D, positionDepth);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH,SCR_HEIGHT,0,GL_RGB,GL_FLOAT,NULL);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, positionDepth,0);
+    //Singleton::getInstance()->setGBufferPosTexture(positionDepth);
 
     glGenTextures(1, &normal);
     glBindTexture(GL_TEXTURE_2D, normal);

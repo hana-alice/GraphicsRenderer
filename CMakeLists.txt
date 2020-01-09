@@ -8,9 +8,8 @@ include_directories(
     "${PROJECT_SOURCE_DIR}/Header/base"
     "${PROJECT_SOURCE_DIR}/Header/object"
 )
-link_directories(${PROJECT_SOURCE_DIR}/dependencies/lib)
-link_libraries(glfw3 glfw3dll)
-
+link_directories(${PROJECT_SOURCE_DIR}/dependencies/lib ${PROJECT_SOURCE_DIR}/dependencies/dll)
+link_libraries(glfw3 glfw3dll assimp-vc140-mt)
 add_subdirectory(${PROJECT_SOURCE_DIR}/dependencies/impl/)
 add_subdirectory(${PROJECT_SOURCE_DIR}/source/base)
 add_subdirectory(${PROJECT_SOURCE_DIR}/source/object)
@@ -23,6 +22,7 @@ target_link_libraries(GraphicsRenderer
     glad 
     glfw3
     glfw3dll
+    assimp-vc140-mt
 )
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

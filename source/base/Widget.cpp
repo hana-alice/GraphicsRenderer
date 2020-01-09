@@ -11,6 +11,7 @@
 #include "skybox.h"
 #include "GeoObject.h"
 #include "plane.h"
+#include "nanosuit.h"
 GLFWwindow* window = nullptr;
 static float deltaTime = 0.0f;
 static float lastFrame = 0.0f;
@@ -142,10 +143,15 @@ void Widget::initObject()
 	//m_glWrapper->registerRenderFunc(light, &Light::render);
 	//m_glWrapper->registerDestroyFunc(light, &Light::destroy);
 	
-	LightCube* object = new LightCube();
-	m_glWrapper->registerInitFunc(object, &LightCube::init);
-	m_glWrapper->registerRenderFunc(object, &LightCube::render);
-	m_glWrapper->registerDestroyFunc(object, &LightCube::destroy);
+	//LightCube* object = new LightCube();
+	//m_glWrapper->registerInitFunc(object, &LightCube::init);
+	//m_glWrapper->registerRenderFunc(object, &LightCube::render);
+	//m_glWrapper->registerDestroyFunc(object, &LightCube::destroy);
+
+	Nanosuit* nanosuit = new Nanosuit;
+	m_glWrapper->registerInitFunc(nanosuit, &Nanosuit::init);
+	m_glWrapper->registerRenderFunc(nanosuit, &Nanosuit::render);
+	m_glWrapper->registerDestroyFunc(nanosuit, &Nanosuit::destroy);
 
 	//Plane* plane = new Plane();
 	//m_glWrapper->registerInitFunc(plane, &Plane::init);

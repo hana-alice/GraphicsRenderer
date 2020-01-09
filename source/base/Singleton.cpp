@@ -238,3 +238,13 @@ GLuint Singleton::getDepthRBO()
 {
     return m_depthRBO;
 }
+
+void Singleton::setGbufferPosDepth(GLuint posDepth)
+{
+    m_gPosDepth = posDepth;
+}
+
+GLuint Singleton::getGBufferPosDepth()
+{
+    return m_gPosDepth;
+}

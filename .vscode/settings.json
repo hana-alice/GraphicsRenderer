@@ -35,6 +35,11 @@
         "type_traits": "cpp",
         "utility": "cpp",
         "typeinfo": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "chrono": "cpp",
+        "ctime": "cpp",
+        "list": "cpp",
+        "iomanip": "cpp",
+        "ratio": "cpp"
     }
 }
