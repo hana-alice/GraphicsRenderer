@@ -6,6 +6,7 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/Header",
                 "${workspaceFolder}/dependencies/include/**",
+                "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include",
                 "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Tools/MSVC/14.20.27508/include",
                 "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Tools/MSVC/14.20.27508/atlmfc/include",
                 "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Auxiliary/VS/include",

@@ -88,8 +88,12 @@ void Plane::init()
 	GLint modelLoc = glGetUniformLocation(m_program, "modelMat");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMat));
 
+	glm::mat4 texMat(1.0);
+	GLint texMatLoc = glGetUniformLocation(m_program, "texMat");
+	glUniformMatrix4fv(texMatLoc, 1, GL_FALSE, glm::value_ptr(texMat));
+
 	string path = CommonFunc::getResourceDirectory();
-    string imgPath = path + "/resources/images/floor.jpeg";
+    string imgPath = path + "/resources/images/jojo0.jpg";
 
     glGenTextures(1,&m_tex);
     glActiveTexture(GL_TEXTURE0);
@@ -111,8 +115,8 @@ void Plane::init()
     
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	GLWrapper::errorCheck();
     
     GLuint texSamplerLoc = glGetUniformLocation(m_program,"plane");
@@ -149,6 +153,16 @@ void Plane::render()
 		GLint modelLoc = glGetUniformLocation(m_program, "lightSpaceMatrix");
 		glm::mat4 vpMat = lightProjection * viewMat;
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(vpMat));
+
+        glm::mat4 texMat(1.0);
+        static uint64_t ct = 0;
+		texMat = glm::translate(texMat, glm::vec3(0.5, 0.5, 0.0));
+        texMat = glm::rotate(texMat, glm::radians(50.0f * ct),glm::vec3(0.0,0.0,1.0));
+		texMat = glm::translate(texMat, glm::vec3(-0.5, -0.5, 0.0));
+        ct++;
+        GLint texLoc = glGetUniformLocation(m_program, "texMat");
+        glUniformMatrix4fv(texLoc, 1, GL_FALSE, glm::value_ptr(texMat));
+
         GLWrapper::errorCheck();
         glDrawArrays(GL_TRIANGLES,0,6);
         GLWrapper::errorCheck();

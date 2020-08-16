@@ -12,6 +12,7 @@
 #include "GeoObject.h"
 #include "plane.h"
 #include "nanosuit.h"
+#include "pbrdemo.h"
 GLFWwindow* window = nullptr;
 static float deltaTime = 0.0f;
 static float lastFrame = 0.0f;
@@ -129,7 +130,7 @@ void Widget::initObject()
 
 	//SampleBox* sampleBox = new SampleBox;
 	//m_glWrapper->registerInitFunc(sampleBox, &SampleBox::init);
-	////m_glWrapper->registerRenderFunc(sampleBox,&SampleBox::render);
+	//m_glWrapper->registerRenderFunc(sampleBox,&SampleBox::render);
 	//m_glWrapper->registerDestroyFunc(sampleBox, &SampleBox::destroy);
 	//
 	//Cube* cube = new Cube;
@@ -162,6 +163,11 @@ void Widget::initObject()
 	//m_glWrapper->registerInitFunc(geoObject, &GeoObject::init);
 	//m_glWrapper->registerRenderFunc(geoObject, &GeoObject::render);
 	//m_glWrapper->registerDestroyFunc(geoObject, &GeoObject::destroy);
+
+	PBRDemo* pbr = new PBRDemo;
+	m_glWrapper->registerInitFunc(pbr, &PBRDemo::init);
+	m_glWrapper->registerRenderFunc(pbr, &PBRDemo::render);
+	m_glWrapper->registerDestroyFunc(pbr, &PBRDemo::destroy);
 
 	m_glWrapper->init();
 }

@@ -11,7 +11,7 @@ m_lightDir(-0.2f, -1.0f, -0.3f)
     m_viewMat = glm::mat4(1.0f);
     m_viewMat = glm::translate(m_viewMat, glm::vec3(0.0f, 0.0f, -3.0f));
 	m_fov = 45.0f;
-    m_camPosition = glm::vec3(0.0,3.0,3.0);
+    m_camPosition = glm::vec3(0.0,0.0,3.0);
     m_targetPos = glm::vec3(0,0,0);
     m_camDirection = glm::normalize(m_camPosition - m_targetPos);
 
