@@ -15,7 +15,7 @@ public:
 	void render();
 
 	void destroy();
-
+	
 	void setModelMatrix(glm::mat4 modelMat);
 
 	void setColor(glm::vec4 color);

@@ -38,11 +38,13 @@ private:
 	GLuint m_vao;
 	GLuint m_vbo;
 	GLuint m_ibo;
+	GLuint m_convolutionalPgm;
 
 	GLuint m_cubePgm;
 	GLuint m_skyboxPgm;
 	GLuint m_hdrTex;
 	GLuint m_envCubeTex;
+	GLuint m_irradianceMap;
 
     uint32_t 	m_indexCount;
 	PBRParams 	m_pbrParams;

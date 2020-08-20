@@ -171,6 +171,9 @@ void PBRDemo::prepareVerts()
     unsigned int uniformBlockIndex = glGetUniformBlockIndex(m_program,"Matrices");
     glUniformBlockBinding(m_program,uniformBlockIndex,Singleton::getInstance()->getUboBlockId());
 	GLWrapper::errorCheck();
+    GLuint smpLoc = glGetUniformLocation(m_program, "irradianceMap");
+    glUniform1i(smpLoc, 1);
+	GLWrapper::errorCheck();
     GLuint aoLoc = glGetUniformLocation(m_program, "ao");
     glUniform1f(aoLoc, 1.0f);
 	GLWrapper::errorCheck();
@@ -196,16 +199,20 @@ void PBRDemo::render()
     int rows = 7;
 	int columns = 7;
     float space = 2.5;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_irradianceMap);
     for (size_t row = 0; row < rows; row++)
     {
         GLuint metalLoc = glGetUniformLocation(m_program, "metallic");
 		float metallic = (float)row / (float)rows;
         glUniform1f(metalLoc, (float)row / (float)rows);
+		GLWrapper::errorCheck();
         for (size_t column = 0; column < columns; column++)
         {
             GLuint roughLoc = glGetUniformLocation(m_program, "roughness");
             float roughness = glm::clamp((float)column / (float)columns, 0.05f, 1.0f);
             glUniform1f(roughLoc, roughness);
+			GLWrapper::errorCheck();
             glm::mat4 model = glm::mat4(1.0f);
             GLuint modelLoc = glGetUniformLocation(m_program, "model");
             model = glm::translate(model, glm::vec3(
@@ -214,12 +221,14 @@ void PBRDemo::render()
                 0.0f
             ));
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			GLWrapper::errorCheck();
 			glDrawElements(GL_TRIANGLE_STRIP, m_indexCount, GL_UNSIGNED_INT, 0);
+			GLWrapper::errorCheck();
             
         }
 		
     }
-
+	GLWrapper::errorCheck();
     for (size_t i = 0; i < sizeof(lightPositions)/sizeof(lightPositions[0]); i++)
     {
         glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
@@ -240,9 +249,9 @@ void PBRDemo::render()
 
     glUseProgram(m_skyboxPgm);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_envCubeTex);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_irradianceMap);
     renderCube(); 
-
+	GLWrapper::errorCheck();
 	glDisable(GL_DEPTH_TEST);
 	glUseProgram(0);
 	GLWrapper::errorCheck();
@@ -277,8 +286,8 @@ void PBRDemo::prepareCube()
     glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 	GLWrapper::errorCheck();
-    std::ifstream vsSkySource,fsSkySource;
 
+    std::ifstream vsSkySource,fsSkySource;
     vsSkySource.open(srcPath + "/resources/shader/pbrskybox.vs");
     fsSkySource.open(srcPath + "/resources/shader/pbrskybox.fs");
     
@@ -293,7 +302,6 @@ void PBRDemo::prepareCube()
 		fss += (buff + '\n');
 	}
 
-    m_glWrapper = Singleton::getInstance()->getGLWrapper();
     vertexShader = m_glWrapper->createShader(GL_VERTEX_SHADER,vss.c_str());
     fragmentShader = m_glWrapper->createShader(GL_FRAGMENT_SHADER,fss.c_str());
     m_skyboxPgm = m_glWrapper->createProgram(vertexShader,fragmentShader);
@@ -301,6 +309,30 @@ void PBRDemo::prepareCube()
     glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 	GLWrapper::errorCheck();
+
+    std::ifstream vsIrrSource,fsIrrSource;
+    vsIrrSource.open(srcPath + "/resources/shader/cubemap.vs");
+    fsIrrSource.open(srcPath + "/resources/shader/convolutionalEnv.fs");
+    
+	std::string tmpBuf;
+	std::string vsss, fsss;
+	while (getline(vsIrrSource, tmpBuf))
+	{
+		vsss += (tmpBuf + '\n');
+	}
+	while (getline(fsIrrSource, tmpBuf))
+	{
+		fsss += (tmpBuf + '\n');
+	}
+
+    vertexShader = m_glWrapper->createShader(GL_VERTEX_SHADER,vsss.c_str());
+    fragmentShader = m_glWrapper->createShader(GL_FRAGMENT_SHADER,fsss.c_str());
+    m_convolutionalPgm = m_glWrapper->createProgram(vertexShader,fragmentShader);
+	GLWrapper::errorCheck();
+    glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+	GLWrapper::errorCheck();
+
     glUseProgram(m_skyboxPgm);
     GLint envSampler = glGetUniformLocation(m_skyboxPgm, "environmentMap");
 	GLWrapper::errorCheck();
@@ -364,6 +396,41 @@ void PBRDemo::prepareCube()
         renderCube();    
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	GLWrapper::errorCheck();
+    glGenTextures(1, &m_irradianceMap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_irradianceMap);
+    for (size_t i = 0; i < 6; i++)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 32, 32, 0, GL_RGB, GL_FLOAT, nullptr);
+    }
+	GLWrapper::errorCheck();
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
+    glUseProgram(m_convolutionalPgm);
+    GLint envSamplerLoc = glGetUniformLocation(m_convolutionalPgm, "envMap");
+    glUniform1i(envSamplerLoc, 0);
+    projLoc = glGetUniformLocation(m_convolutionalPgm, "projectionMat");
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(captureProj));
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_envCubeTex);
+    glViewport(0, 0, 32, 32);
+    for (size_t i = 0; i < 6; i++)
+    {
+        GLint viewLoc = glGetUniformLocation(m_convolutionalPgm, "viewMat");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(captureViews[i]));
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, m_irradianceMap, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        renderCube();    
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	GLWrapper::errorCheck();
 }
 

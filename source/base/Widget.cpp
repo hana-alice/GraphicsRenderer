@@ -149,10 +149,10 @@ void Widget::initObject()
 	//m_glWrapper->registerRenderFunc(object, &LightCube::render);
 	//m_glWrapper->registerDestroyFunc(object, &LightCube::destroy);
 
-	Nanosuit* nanosuit = new Nanosuit;
-	m_glWrapper->registerInitFunc(nanosuit, &Nanosuit::init);
-	m_glWrapper->registerRenderFunc(nanosuit, &Nanosuit::render);
-	m_glWrapper->registerDestroyFunc(nanosuit, &Nanosuit::destroy);
+	//Nanosuit* nanosuit = new Nanosuit;
+	//m_glWrapper->registerInitFunc(nanosuit, &Nanosuit::init);
+	//m_glWrapper->registerRenderFunc(nanosuit, &Nanosuit::render);
+	//m_glWrapper->registerDestroyFunc(nanosuit, &Nanosuit::destroy);
 
 	//Plane* plane = new Plane();
 	//m_glWrapper->registerInitFunc(plane, &Plane::init);
