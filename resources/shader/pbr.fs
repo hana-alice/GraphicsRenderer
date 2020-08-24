@@ -58,9 +58,13 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
-    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
-    //return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }
+
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+}  
 
 void main()
 {
@@ -96,7 +100,7 @@ void main()
         float NdotL = max(dot(N, L), 0.0);
         Lo += (kD * albedo / PI + specular) * radiance * NdotL;
     }
-    vec3 kS = fresnelSchlick(max(dot(N, V), 0.0), F0);
+    vec3 kS = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
     vec3 kD = 1.0 - kS;
     kD *= 1.0 - metallic;
 
@@ -104,8 +108,8 @@ void main()
     vec3 diffuse = irradiance * albedo;
     const float MAX_REFLECTION_LOD = 4.0;
     vec3 prefilterColor = textureLod(prefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
-    vec2 brdf = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness).rg);
-    vec2 specular = prefilterColor * (F * brdf.x + brdf.y);
+    vec2 brdf = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
+    vec3 specular = prefilterColor * (kS * brdf.x + brdf.y);
 
 
     vec3 ambient = (kD * diffuse + specular) * ao;

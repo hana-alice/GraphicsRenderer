@@ -1,5 +1,5 @@
 #version 330 core
-out FragColor;
+out vec4 FragColor;
 in vec3 WorldPos;
 
 uniform samplerCube envMap;
@@ -11,7 +11,7 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
     float a = roughness * roughness;
     float a2 = a * a;
-    float NdotH = max(dot(N* H), 0.0);
+    float NdotH = max(dot(N , H), 0.0);
     float NdotH2 = NdotH * NdotH;
 
     float nom = a2;
@@ -54,10 +54,10 @@ vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness)
     vec3 bitangent = cross(N, tangent);
 
     vec3 sampleVec = tangent * H.x + bitangent * H.y + N * H.z;
-    return normalize(samplerVec);
+    return normalize(sampleVec);
 }
 
-int main()
+void main()
 {
     vec3 N = normalize(WorldPos);
 
@@ -68,7 +68,7 @@ int main()
     vec3 prefilteredColor = vec3(0.0);
     float totalWeight = 0.0;
 
-    for(uint i = 0; i < SAMPLE_COUNT; ++i)
+    for(uint i = 0u; i < SAMPLE_COUNT; ++i)
     {
         vec2 Xi = Hamersley(i,SAMPLE_COUNT);
         vec3 H = ImportanceSampleGGX(Xi, N, roughness);
@@ -77,8 +77,20 @@ int main()
         float NdotL = max(dot(N, L), 0.0);
         if(NdotL > 0.0)
         {
-            prefilteredColor += texture(envMap, L).rgb * NdotL;
-            totalWeight += NdotL;
+            // sample from the environment's mip level based on roughness/pdf
+            float D   = DistributionGGX(N, H, roughness);
+            float NdotH = max(dot(N, H), 0.0);
+            float HdotV = max(dot(H, V), 0.0);
+            float pdf = D * NdotH / (4.0 * HdotV) + 0.0001; 
+
+            float resolution = 512.0; // resolution of source cubemap (per face)
+            float saTexel  = 4.0 * Pi / (6.0 * resolution * resolution);
+            float saSample = 1.0 / (float(SAMPLE_COUNT) * pdf + 0.0001);
+
+            float mipLevel = roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel); 
+            
+            prefilteredColor += textureLod(envMap, L, mipLevel).rgb * NdotL;
+            totalWeight      += NdotL;
         }
     }
     prefilteredColor = prefilteredColor / totalWeight;

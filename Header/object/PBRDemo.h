@@ -51,6 +51,8 @@ private:
 	GLuint m_hdrTex;
 	GLuint m_envCubeTex;
 	GLuint m_irradianceMap;
+	GLuint m_prefilterMap;
+	GLuint m_brdfLUTTexture;
 
     uint32_t 	m_indexCount;
 	PBRParams 	m_pbrParams;

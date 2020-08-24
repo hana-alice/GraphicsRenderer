@@ -27,6 +27,7 @@ glm::vec3 lightColors[] = {
 };
 
 void renderCube();
+void renderQuad();
 
 PBRDemo::PBRDemo() : m_indexCount(0)
 {
@@ -46,8 +47,8 @@ PBRDemo::~PBRDemo()
 
 void PBRDemo::init()
 {
-    prepareVerts();
 	prepareCube();
+    prepareVerts();
 }
 
 void PBRDemo::prepareVerts()
@@ -253,7 +254,7 @@ void PBRDemo::render()
 
     glUseProgram(m_skyboxPgm);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_irradianceMap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_prefilterMap);
     renderCube(); 
 	GLWrapper::errorCheck();
 	glDisable(GL_DEPTH_TEST);
@@ -288,9 +289,11 @@ GLuint PBRDemo::loadShader(const char* vsPath, const char* fsPath)
     vertexShader = m_glWrapper->createShader(GL_VERTEX_SHADER,vs.c_str());
     fragmentShader = m_glWrapper->createShader(GL_FRAGMENT_SHADER,fs.c_str());
     
+    GLuint pgm = m_glWrapper->createProgram(vertexShader, fragmentShader);
     glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
-    return m_glWrapper->createProgram(vertexShader,fragmentShader);
+
+    return pgm;
 }
 
 void PBRDemo::prepareCube()
@@ -298,17 +301,17 @@ void PBRDemo::prepareCube()
     std::string srcPath = CommonFunc::getResourceDirectory();
     std::ifstream vsSource,fsSource;
 
-    m_cubePgm   = loadShader(srcPath + "/resources/shader/cubemap.vs", srcPath + "/resources/shader/cubemap.fs");
-    m_skyboxPgm = loadShader(srcPath + "/resources/shader/pbrskybox.vs", srcPath + "/resources/shader/pbrskybox.fs");
-    m_brdfPgm   = loadShader(srcPath + "/resources/shader/brdf.vs", srcPath + "/resources/shader/brdf.fs");
-    m_convolutionalPgm  = loadShader(srcPath + "/resources/shader/cubemap.vs", srcPath + "/resources/shader/convolutionalEnv.fs");
-    m_prefilterPgm      = loadShader(srcPath + "/resources/shader/cubemap.vs", srcPath + "/resources/shader/prefilter.fs");
+    m_cubePgm   = loadShader((srcPath + "/resources/shader/cubemap.vs").c_str(), (srcPath + "/resources/shader/cubemap.fs").c_str());
+    m_skyboxPgm = loadShader((srcPath + "/resources/shader/pbrskybox.vs").c_str(), (srcPath + "/resources/shader/pbrskybox.fs").c_str());
+    m_brdfPgm   = loadShader((srcPath + "/resources/shader/brdf.vs").c_str(), (srcPath + "/resources/shader/brdf.fs").c_str());
+    m_convolutionalPgm  = loadShader((srcPath + "/resources/shader/cubemap.vs").c_str(), (srcPath + "/resources/shader/convolutionalEnv.fs").c_str());
+    m_prefilterPgm      = loadShader((srcPath + "/resources/shader/cubemap.vs").c_str(), (srcPath + "/resources/shader/prefilter.fs").c_str());
 
     glUseProgram(m_skyboxPgm);
     GLint envSampler = glGetUniformLocation(m_skyboxPgm, "environmentMap");
 	GLWrapper::errorCheck();
-    unsigned int uniformBlockIndex = glGetUniformBlockIndex(m_program,"Matrices");
-    glUniformBlockBinding(m_program,uniformBlockIndex,Singleton::getInstance()->getUboBlockId());
+    unsigned int uniformBlockIndex = glGetUniformBlockIndex(m_skyboxPgm,"Matrices");
+    glUniformBlockBinding(m_skyboxPgm,uniformBlockIndex,Singleton::getInstance()->getUboBlockId());
 	GLWrapper::errorCheck();
     glUniform1i(envSampler, 0);
     glUseProgram(0);
@@ -403,8 +406,73 @@ void PBRDemo::prepareCube()
         renderCube();    
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	GLWrapper::errorCheck();
+
+    glGenTextures(1, &m_prefilterMap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_prefilterMap);
+    for (size_t i = 0; i < 6; i++)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 128, 128, 0, GL_RGB, GL_FLOAT, nullptr);
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    GLWrapper::errorCheck();
+    glUseProgram(m_prefilterPgm);
+    GLint envCubeSmp = glGetUniformLocation(m_prefilterPgm, "envMap");
+    glUniform1i(envCubeSmp, 0);
+    projLoc = glGetUniformLocation(m_prefilterPgm, "projectionMat") ;
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(captureProj));
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_envCubeTex);
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    uint8_t maxMipmapLevels = 5;
+    GLWrapper::errorCheck();
+    for (size_t i = 0; i < maxMipmapLevels; i++)
+    {
+        uint32_t mipWidth   = 128 * pow(0.5, i);
+        uint32_t mipHeight  = 128 * pow(0.5, i);
+        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
+        glViewport(0, 0, mipWidth, mipHeight);
+
+        float roughness = float(i) / float(maxMipmapLevels - 1);
+        GLint roughLoc = glGetUniformLocation(m_prefilterPgm, "roughness");
+        glUniform1f(roughLoc, roughness);
+        for (size_t i = 0; i < 6; i++)
+        {
+            GLint viewLoc = glGetUniformLocation(m_prefilterPgm, "viewMat");
+            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(captureViews[i]));
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, m_prefilterMap, i);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            renderCube();
+        }
+    }
+    GLWrapper::errorCheck();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glGenTextures(1, &m_brdfLUTTexture);
+    glBindTexture(GL_TEXTURE_2D, m_brdfLUTTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_brdfLUTTexture, 0);
+    GLWrapper::errorCheck();
+    glViewport(0, 0, 512, 512);
+    glUseProgram(m_brdfLUTTexture);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    renderQuad();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    GLWrapper::errorCheck();
 }
 
 unsigned int PBRDemo::loadTexture(char const * path, bool hdr)
@@ -467,6 +535,35 @@ unsigned int PBRDemo::loadTexture(char const * path, bool hdr)
 void PBRDemo::destroy()
 {
 	delete this;
+}
+
+unsigned int quadVAO = 0;
+unsigned int quadVBO;
+void renderQuad()
+{
+    if (quadVAO == 0)
+    {
+        float quadVertices[] = {
+            // positions        // texture Coords
+            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+             1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+             1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        };
+        // setup plane VAO
+        glGenVertexArrays(1, &quadVAO);
+        glGenBuffers(1, &quadVBO);
+        glBindVertexArray(quadVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    }
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindVertexArray(0);
 }
 
 void renderCube()
