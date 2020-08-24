@@ -11,6 +11,8 @@ uniform float roughness;
 uniform float ao;
 
 uniform samplerCube irradianceMap;
+uniform samplerCube prefilterMap;
+uniform sampler2D brdfLUT;
 
 uniform vec3 lightPositions[4];
 uniform vec3 lightColors[4];
@@ -64,7 +66,7 @@ void main()
 {
     vec3 N = normalize(Normal);
     vec3 V = normalize(camPos - WorldPos);
-
+    vec3 R = reflect(-V, N);
     vec3 F0 = vec3(0.04);
     F0 = mix(F0, albedo, metallic);
 
@@ -100,7 +102,13 @@ void main()
 
     vec3 irradiance = texture(irradianceMap, N).rgb;
     vec3 diffuse = irradiance * albedo;
-    vec3 ambient = (kD * diffuse) * ao;
+    const float MAX_REFLECTION_LOD = 4.0;
+    vec3 prefilterColor = textureLod(prefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
+    vec2 brdf = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness).rg);
+    vec2 specular = prefilterColor * (F * brdf.x + brdf.y);
+
+
+    vec3 ambient = (kD * diffuse + specular) * ao;
     vec3 color = ambient + Lo;
 
     color = color / (color + vec3(1.0));

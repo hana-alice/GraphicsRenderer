@@ -31,17 +31,23 @@ private:
 
 	void prepareVerts();
 
+	GLuint loadShader(const char* vs, const char* fs);
+
 	GLWrapper* m_glWrapper;
 	GLuint m_vertexShader;
 	GLuint m_fragmentShader;
-	GLuint m_program;
+	
 	GLuint m_vao;
 	GLuint m_vbo;
 	GLuint m_ibo;
-	GLuint m_convolutionalPgm;
 
+	GLuint m_program;
+	GLuint m_convolutionalPgm;
 	GLuint m_cubePgm;
 	GLuint m_skyboxPgm;
+	GLuint m_prefilterPgm;
+	GLuint m_brdfPgm;
+
 	GLuint m_hdrTex;
 	GLuint m_envCubeTex;
 	GLuint m_irradianceMap;

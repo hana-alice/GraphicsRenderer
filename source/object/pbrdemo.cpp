@@ -172,7 +172,11 @@ void PBRDemo::prepareVerts()
     glUniformBlockBinding(m_program,uniformBlockIndex,Singleton::getInstance()->getUboBlockId());
 	GLWrapper::errorCheck();
     GLuint smpLoc = glGetUniformLocation(m_program, "irradianceMap");
-    glUniform1i(smpLoc, 1);
+    glUniform1i(smpLoc, 0);
+    GLuint prefLoc = glGetUniformLocation(m_program, "prefilterMap");
+    glUniform1i(prefLoc, 1);
+    GLuint brdfLoc = glGetUniformLocation(m_program, "brdfLUT");
+    glUniform1i(brdfLoc, 2);
 	GLWrapper::errorCheck();
     GLuint aoLoc = glGetUniformLocation(m_program, "ao");
     glUniform1f(aoLoc, 1.0f);
@@ -257,13 +261,13 @@ void PBRDemo::render()
 	GLWrapper::errorCheck();
 }
 
-void PBRDemo::prepareCube()
+GLuint PBRDemo::loadShader(const char* vsPath, const char* fsPath)
 {
     std::string srcPath = CommonFunc::getResourceDirectory();
     std::ifstream vsSource,fsSource;
 
-    vsSource.open(srcPath + "/resources/shader/cubemap.vs");
-    fsSource.open(srcPath + "/resources/shader/cubemap.fs");
+    vsSource.open(vsPath);
+    fsSource.open(fsPath);
     
 	std::string bufStr;
 	std::string vs, fs, gs;
@@ -275,63 +279,30 @@ void PBRDemo::prepareCube()
 	{
 		fs += (bufStr + '\n');
 	}
+    vsSource.close();
+    fsSource.close();
 
     GLuint vertexShader, fragmentShader;
 
     m_glWrapper = Singleton::getInstance()->getGLWrapper();
     vertexShader = m_glWrapper->createShader(GL_VERTEX_SHADER,vs.c_str());
     fragmentShader = m_glWrapper->createShader(GL_FRAGMENT_SHADER,fs.c_str());
-    m_cubePgm = m_glWrapper->createProgram(vertexShader,fragmentShader);
-
-    glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-	GLWrapper::errorCheck();
-
-    std::ifstream vsSkySource,fsSkySource;
-    vsSkySource.open(srcPath + "/resources/shader/pbrskybox.vs");
-    fsSkySource.open(srcPath + "/resources/shader/pbrskybox.fs");
     
-	std::string buff;
-	std::string vss, fss;
-	while (getline(vsSkySource, buff))
-	{
-		vss += (buff + '\n');
-	}
-	while (getline(fsSkySource, buff))
-	{
-		fss += (buff + '\n');
-	}
-
-    vertexShader = m_glWrapper->createShader(GL_VERTEX_SHADER,vss.c_str());
-    fragmentShader = m_glWrapper->createShader(GL_FRAGMENT_SHADER,fss.c_str());
-    m_skyboxPgm = m_glWrapper->createProgram(vertexShader,fragmentShader);
-	GLWrapper::errorCheck();
     glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
-	GLWrapper::errorCheck();
+    return m_glWrapper->createProgram(vertexShader,fragmentShader);
+}
 
-    std::ifstream vsIrrSource,fsIrrSource;
-    vsIrrSource.open(srcPath + "/resources/shader/cubemap.vs");
-    fsIrrSource.open(srcPath + "/resources/shader/convolutionalEnv.fs");
-    
-	std::string tmpBuf;
-	std::string vsss, fsss;
-	while (getline(vsIrrSource, tmpBuf))
-	{
-		vsss += (tmpBuf + '\n');
-	}
-	while (getline(fsIrrSource, tmpBuf))
-	{
-		fsss += (tmpBuf + '\n');
-	}
+void PBRDemo::prepareCube()
+{
+    std::string srcPath = CommonFunc::getResourceDirectory();
+    std::ifstream vsSource,fsSource;
 
-    vertexShader = m_glWrapper->createShader(GL_VERTEX_SHADER,vsss.c_str());
-    fragmentShader = m_glWrapper->createShader(GL_FRAGMENT_SHADER,fsss.c_str());
-    m_convolutionalPgm = m_glWrapper->createProgram(vertexShader,fragmentShader);
-	GLWrapper::errorCheck();
-    glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-	GLWrapper::errorCheck();
+    m_cubePgm   = loadShader(srcPath + "/resources/shader/cubemap.vs", srcPath + "/resources/shader/cubemap.fs");
+    m_skyboxPgm = loadShader(srcPath + "/resources/shader/pbrskybox.vs", srcPath + "/resources/shader/pbrskybox.fs");
+    m_brdfPgm   = loadShader(srcPath + "/resources/shader/brdf.vs", srcPath + "/resources/shader/brdf.fs");
+    m_convolutionalPgm  = loadShader(srcPath + "/resources/shader/cubemap.vs", srcPath + "/resources/shader/convolutionalEnv.fs");
+    m_prefilterPgm      = loadShader(srcPath + "/resources/shader/cubemap.vs", srcPath + "/resources/shader/prefilter.fs");
 
     glUseProgram(m_skyboxPgm);
     GLint envSampler = glGetUniformLocation(m_skyboxPgm, "environmentMap");
@@ -396,6 +367,8 @@ void PBRDemo::prepareCube()
         renderCube();    
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_envCubeTex);
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	GLWrapper::errorCheck();
     glGenTextures(1, &m_irradianceMap);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_irradianceMap);
