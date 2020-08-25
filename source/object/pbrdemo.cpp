@@ -192,7 +192,7 @@ void PBRDemo::prepareVerts()
 }
 
 void PBRDemo::render()
-{
+{    
     glViewport(0, 0, 1280, 720);
 	glUseProgram(m_program);
 	glEnable(GL_DEPTH_TEST);
@@ -206,6 +206,11 @@ void PBRDemo::render()
     float space = 2.5;
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_irradianceMap);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_prefilterMap);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, m_brdfLUTTexture);
+
     for (size_t row = 0; row < rows; row++)
     {
         GLuint metalLoc = glGetUniformLocation(m_program, "metallic");
@@ -254,12 +259,36 @@ void PBRDemo::render()
 
     glUseProgram(m_skyboxPgm);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_prefilterMap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_envCubeTex);
     renderCube(); 
 	GLWrapper::errorCheck();
 	glDisable(GL_DEPTH_TEST);
 	glUseProgram(0);
+
+    /* static int count = 0;
+    static GLuint pgm = 0;
+    if (count < 1)
+    {
+        std::string srcPath = CommonFunc::getResourceDirectory();
+        pgm   = loadShader((srcPath + "/resources/shader/texturev2.vs").c_str(), (srcPath + "/resources/shader/texturev2.fs").c_str());
+        glUseProgram(pgm);
+        GLint smp = glGetUniformLocation(pgm, "texCanvas");
+        glUniform1i(smp, 0);
+		GLWrapper::errorCheck();
+        count++;
+    }
+    glUseProgram(pgm);
+    glActiveTexture(GL_TEXTURE0);
 	GLWrapper::errorCheck();
+    glBindTexture(GL_TEXTURE_2D, m_brdfLUTTexture);
+	GLWrapper::errorCheck();
+    renderQuad();
+    GLWrapper::errorCheck();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glUseProgram(0);  */
+    //glUseProgram(m_brdfPgm);
+    //renderQuad();
+
 }
 
 GLuint PBRDemo::loadShader(const char* vsPath, const char* fsPath)
@@ -316,6 +345,7 @@ void PBRDemo::prepareCube()
     glUniform1i(envSampler, 0);
     glUseProgram(0);
 	GLWrapper::errorCheck();
+
     GLuint captureFBO, captureRBO;
     glGenFramebuffers(1, &captureFBO);
     glGenRenderbuffers(1, &captureRBO);
@@ -324,7 +354,7 @@ void PBRDemo::prepareCube()
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 512, 512);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 	GLWrapper::errorCheck();
-    m_hdrTex = loadTexture((srcPath + "/resources/images/Walk_Of_Fame/Mans_Outside_2k.hdr").c_str(),true);
+    m_hdrTex = loadTexture((srcPath + "/resources/images/kloppenheim_02_2k.hdr").c_str(),true);
 	GLWrapper::errorCheck();
     glGenTextures(1, &m_envCubeTex);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_envCubeTex);
@@ -349,6 +379,7 @@ void PBRDemo::prepareCube()
         glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
     };
 	GLWrapper::errorCheck();
+
     glUseProgram(m_cubePgm);
     GLint erSamplerLoc = glGetUniformLocation(m_cubePgm, "equirectangularMap");
     glUniform1i(erSamplerLoc, 0);
@@ -370,9 +401,11 @@ void PBRDemo::prepareCube()
         renderCube();    
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_envCubeTex);
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	GLWrapper::errorCheck();
+
     glGenTextures(1, &m_irradianceMap);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_irradianceMap);
     for (size_t i = 0; i < 6; i++)
@@ -396,6 +429,7 @@ void PBRDemo::prepareCube()
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_envCubeTex);
     glViewport(0, 0, 32, 32);
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     for (size_t i = 0; i < 6; i++)
     {
         GLint viewLoc = glGetUniformLocation(m_convolutionalPgm, "viewMat");
@@ -431,22 +465,22 @@ void PBRDemo::prepareCube()
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     uint8_t maxMipmapLevels = 5;
     GLWrapper::errorCheck();
-    for (size_t i = 0; i < maxMipmapLevels; i++)
+    for (size_t mip = 0; mip < maxMipmapLevels; mip++)
     {
-        uint32_t mipWidth   = 128 * pow(0.5, i);
-        uint32_t mipHeight  = 128 * pow(0.5, i);
+        uint32_t mipWidth   = 128 * pow(0.5, mip);
+        uint32_t mipHeight  = 128 * pow(0.5, mip);
         glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
         glViewport(0, 0, mipWidth, mipHeight);
 
-        float roughness = float(i) / float(maxMipmapLevels - 1);
+        float roughness = float(mip) / float(maxMipmapLevels - 1);
         GLint roughLoc = glGetUniformLocation(m_prefilterPgm, "roughness");
         glUniform1f(roughLoc, roughness);
         for (size_t i = 0; i < 6; i++)
         {
             GLint viewLoc = glGetUniformLocation(m_prefilterPgm, "viewMat");
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(captureViews[i]));
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, m_prefilterMap, i);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, m_prefilterMap, mip);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             renderCube();
@@ -468,7 +502,7 @@ void PBRDemo::prepareCube()
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_brdfLUTTexture, 0);
     GLWrapper::errorCheck();
     glViewport(0, 0, 512, 512);
-    glUseProgram(m_brdfLUTTexture);
+    glUseProgram(m_brdfPgm);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderQuad();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

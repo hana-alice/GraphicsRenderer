@@ -32,7 +32,7 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
     float denom = (NdotH2 * (a2 - 1.0) + 1.0);
     denom = PI * denom * denom;
 
-    return nom / max(denom, 0.001); 
+    return nom / denom; 
 }
 
 float GeometrySchlickGGX(float NdotV, float roughness)
@@ -95,8 +95,6 @@ void main()
         vec3 kD = vec3(1.0) - kS;
         kD *= 1.0 - metallic;
 
-
-
         float NdotL = max(dot(N, L), 0.0);
         Lo += (kD * albedo / PI + specular) * radiance * NdotL;
     }
@@ -113,7 +111,11 @@ void main()
 
 
     vec3 ambient = (kD * diffuse + specular) * ao;
+
     vec3 color = ambient + Lo;
+
+    //if(gl_FragCoord.x > 0)
+    //    color = prefilterColor;
 
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0/2.2));
